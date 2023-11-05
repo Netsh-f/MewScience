@@ -6,6 +6,8 @@
 #
 import os
 
+print("我在哪？")
+os.system("git branch")
 branch_name = input("请输入个人开发分支名[ (a)kyx / (b)zwj / (c)lyz / (d)djf ]：")
 confirmation = input("请确认位于个人开发分支并已将所有更改提交！[y/n]: ")
 
