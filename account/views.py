@@ -7,4 +7,5 @@ from rest_framework import status
 
 @api_view(['POST'])
 def register(request):
+    # commit test
     return Response({"errno": -1, 'msg': 'Hello World!'}, status=status.HTTP_200_OK)
