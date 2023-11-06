@@ -1,11 +1,13 @@
-from django.shortcuts import render
-
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+
+from account.request_serializers import RegisterSerializer
+from utils.decorators import validate_request
+from utils.error_code import ErrorCode
+from utils.response_util import api_response
 
 
 @api_view(['POST'])
-def register(request):
-    # commit test
-    return Response({"errno": -1, 'msg': 'Hello World!'}, status=status.HTTP_200_OK)
+@validate_request(RegisterSerializer)
+def register(request, serializer):
+    serializer.create(serializer.validated_data)
+    return api_response(ErrorCode.SUCCESS, "success")
