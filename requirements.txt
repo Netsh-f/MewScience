@@ -1,10 +1,32 @@
-asgiref==3.7.2
-backports.zoneinfo==0.2.1
-Django==4.2.7
-djangorestframework==3.14.0
-PyMySQL==1.1.0
-pytz==2023.3.post1
-PyYAML==6.0.1
-sqlparse==0.4.4
-typing_extensions==4.8.0
-
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: win-64
+asgiref=3.7.2=pyhd8ed1ab_0
+backports=1.0=pyhd8ed1ab_3
+backports.zoneinfo=0.2.1=py38h91455d4_8
+bzip2=1.0.8=h8ffe710_4
+ca-certificates=2023.7.22=h56e8100_0
+django=4.2.7=pyhd8ed1ab_0
+djangorestframework=3.14.0=pyhd8ed1ab_0
+libffi=3.4.2=h8ffe710_5
+libsqlite=3.44.0=hcfcfb64_0
+libzlib=1.2.13=hcfcfb64_5
+openssl=3.1.4=hcfcfb64_0
+pip=23.3.1=pyhd8ed1ab_0
+pymysql=1.1.0=pyhd8ed1ab_0
+python=3.8.18=h4de0772_0_cpython
+python_abi=3.8=4_cp38
+pytz=2023.3.post1=pyhd8ed1ab_0
+pyyaml=6.0.1=py38h91455d4_1
+setuptools=68.2.2=pyhd8ed1ab_0
+sqlparse=0.4.4=pyhd8ed1ab_0
+tk=8.6.13=hcfcfb64_0
+typing_extensions=4.8.0=pyha770c72_0
+tzdata=2023c=h71feb2d_0
+ucrt=10.0.22621.0=h57928b3_0
+vc=14.3=h64f974e_17
+vc14_runtime=14.36.32532=hdcecf7f_17
+vs2015_runtime=14.36.32532=h05e6639_17
+wheel=0.41.3=pyhd8ed1ab_0
+xz=5.2.6=h8d14728_0
+yaml=0.2.5=h8ffe710_2
