@@ -8,10 +8,7 @@ import os
 
 print("我在哪？")
 os.system("git branch")
-branch_name = input("请输入个人开发分支名[ (a)kyx / (b)zwj / (c)lyz / (d)djf ]：")
-confirmation = input("请确认位于个人开发分支并已将所有更改提交！[y/n]: ")
-
-
+branch_name = input("请输入个人开发分支名[ (a)kyx / (b)zwj / (c)lyz / (d)djf ]或 (q)退出：")
 if branch_name.lower() == 'a':
     branch_name = 'kyx'
 elif branch_name.lower() == 'b':
@@ -21,8 +18,10 @@ elif branch_name.lower() == 'c':
 elif branch_name.lower() == 'd':
     branch_name = 'djf'
 else:
-    print("检测到无效选项，取消操作。")
+    print("操作已取消。")
+    exit(1)
 
+confirmation = input("请确认位于个人开发分支并已将所有更改提交！[y/n]: ")
 if confirmation.lower() == "y":
     os.system("git checkout dev")
     os.system("git pull")
@@ -35,3 +34,4 @@ if confirmation.lower() == "y":
     os.system(f"git checkout {branch_name}")
 else:
     print("操作已取消。")
+    exit(1)
