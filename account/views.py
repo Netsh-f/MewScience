@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view
 
-from account.request_serializers import RegisterSerializer, LoginSerializer
+from account.request_serializers import RegisterSerializer, LoginSerializer, GetSomethingSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
 from utils.response_util import api_response
@@ -24,10 +24,17 @@ def login_view(request, serializer):
     if user is not None:
         login(request, user)
         return api_response(ErrorCode.SUCCESS)
-    return api_response(ErrorCode.FAILED.WRONG_USERNAME_OR_PASSWORD)
+    return api_response(ErrorCode.WRONG_USERNAME_OR_PASSWORD)
 
 
 @api_view(['GET'])
 def logout_view(request):
     logout(request)
     return api_response(ErrorCode.SUCCESS)
+
+
+@api_view(['POST'])
+@validate_request(GetSomethingSerializer)
+def get_something(request, serializer):
+    name = serializer.validated_data['name']
+    pass
