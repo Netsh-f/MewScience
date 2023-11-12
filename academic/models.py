@@ -9,21 +9,21 @@ class Work(models.Model):
         bronze = 'bronze',
         closed = 'closed',
 
-    id = models.CharField(max_length=16)
+    aid = models.CharField(max_length=16)
     title = models.TextField()
     publication_date = models.DateField()
     oa_status = models.CharField(max_length=6, choices=Oa_status.choices)
     language = models.CharField(max_length=32)
     cited_by_count = models.IntegerField()
     landing_page_url = models.URLField()
-    referenced_works = models.ManyToManyField('self', null=True)
-    related_works = models.ManyToManyField('self', null=True)
+    referenced_works = models.ManyToManyField('self')
+    related_works = models.ManyToManyField('self')
     updated_date = models.DateField()
     created_date = models.DateField()
 
 
 class Concept(models.Model):
-    id = models.CharField(max_length=16)
+    aid = models.CharField(max_length=16)
     wikidata = models.URLField()
     display_name = models.CharField(max_length=64)
     level = models.IntegerField()
@@ -31,8 +31,8 @@ class Concept(models.Model):
     works_count = models.IntegerField()
     cited_by_count = models.IntegerField()
     image_url = models.URLField()
-    ancestors = models.ManyToManyField('self', null=True)
-    related_concepts = models.ManyToManyField('self', null=True)
+    ancestors = models.ManyToManyField('self')
+    related_concepts = models.ManyToManyField('self')
     updated_date = models.DateField()
     created_date = models.DateField()
 
@@ -58,10 +58,10 @@ class Institution(models.Model):
         Facility = 'Facility',
         Other = 'Other',
 
-    id = models.CharField(max_length=16)
+    aid = models.CharField(max_length=16)
     ror = models.URLField(null=True)
     display_name = models.CharField(max_length=128)
-    type = models.CharField(choices=Type.choices)
+    type = models.CharField(choices=Type.choices, max_length=10)
     homepage_url = models.URLField()
     image_url = models.URLField()
     cited_by_count = models.IntegerField()
@@ -69,13 +69,13 @@ class Institution(models.Model):
     country_code = models.CharField(max_length=2)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    associated_institutions = models.ManyToManyField('self', null=True)
+    associated_institutions = models.ManyToManyField('self')
     updated_date = models.DateField()
     created_date = models.DateField()
 
 
 class Author(models.Model):
-    id = models.CharField(max_length=16)
+    aid = models.CharField(max_length=16)
     orcid = models.CharField(max_length=64)
     display_name = models.CharField(max_length=128)
     last_known_institution = models.ForeignKey(Institution, null=True, on_delete=models.SET_NULL)
@@ -92,7 +92,7 @@ class Source(models.Model):
         platform = 'platform',
         bookseries = 'book series'
 
-    id = models.CharField(max_length=16)
+    aid = models.CharField(max_length=16)
     issn_l = models.CharField(max_length=16, null=True)
     host_origanization_name = models.CharField(max_length=64, null=True)
     display_name = models.CharField(max_length=128)
@@ -102,7 +102,7 @@ class Source(models.Model):
     is_in_doaj = models.BooleanField()
     homepage_url = models.URLField()
     country_code = models.CharField(max_length=2)
-    type = models.CharField(choices=Type.choices)
+    type = models.CharField(choices=Type.choices, max_length=12)
     updated_date = models.DateField()
     created_date = models.DateField()
 
@@ -112,7 +112,7 @@ class Location(models.Model):
     is_oa = models.BooleanField()
     landing_page_url = models.URLField()
     pdf_url = models.URLField()
-    source = models.ForeignKey(Source, on_delete=models.SET_NULL)
+    source = models.ForeignKey(Source, null=True, on_delete=models.SET_NULL)
     license = models.CharField(max_length=16)
     version = models.CharField(max_length=32)
     is_accepted = models.BooleanField()
