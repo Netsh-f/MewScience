@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_elasticsearch_dsl',
     "account",
     "science",
 ]
@@ -81,6 +82,12 @@ WSGI_APPLICATION = "MewScience.wsgi.application"
 
 DATABASES = {
     "default": CONFIG['DATABASE']
+}
+
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200',
+    }
 }
 
 # Password validation
