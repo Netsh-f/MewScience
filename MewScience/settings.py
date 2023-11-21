@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl',
     "account",
     "science",
+    "data",
 ]
 
 MIDDLEWARE = [
