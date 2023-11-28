@@ -7,6 +7,7 @@
 """
 import logging
 import time
+from datetime import datetime
 
 import requests
 from django.core.management.base import BaseCommand
@@ -88,10 +89,10 @@ class Command(BaseCommand):
                     'related_works': related_works,
                     'abstract_inverted_index': work['abstract_inverted_index'],
                     'counts_by_year': work['counts_by_year'],
-                    'updated_date': work['updated_date'],
-                    'created_date': work['created_date'],
+                    'updated_date': datetime.strptime(work['updated_date'], "%Y-%m-%dT%H:%M:%S.%f"),
+                    'created_date': datetime.strptime(work['created_date'], "%Y-%m-%d"),
                 }
-                Works.objects.create(data=json_data)
+                Works.objects.create(**json_data)
             end_time = time.time()
             print(f"page {i} import successfully, using {end_time - start_time}s.")
         import_status.work_page = start_page + int(num)
