@@ -15,7 +15,10 @@ def validate_request(serializer_class):
     def decorator(view_func):
         @wraps(view_func)
         def wrapped_view(request, *args, **kwargs):
-            serializer = serializer_class(data=request.data)
+            if request.method == 'GET':
+                serializer = serializer_class(data=request.GET)
+            else:
+                serializer = serializer_class(data=request.data)
             if serializer.is_valid():
                 return view_func(request, serializer=serializer, *args, **kwargs)
             else:

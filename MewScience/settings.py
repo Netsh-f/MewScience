@@ -85,10 +85,8 @@ DATABASES = {
     "default": CONFIG['DATABASE']
 }
 
-ELASTICSEARCH_DSL={
-    'default': {
-        'hosts': 'localhost:9200',
-    }
+ELASTICSEARCH_DSL = {
+    'default': CONFIG['ELASTICSEARCH']
 }
 
 # Password validation
@@ -132,3 +130,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 解决跨域
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOW_HEADERS = '*'
