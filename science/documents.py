@@ -8,12 +8,15 @@
 from elasticsearch_dsl import Index
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
+from science.models import Works
 
 
 @registry.register_document
 class WorkDocument(Document):
-    title = fields.TextField(attr="get_work_title")
     class Index:
         name = 'work'
         settings = {'number_of_shards': 1,
                     'number_of_replicas': 0}
+    class Django:
+        model = Works
+        fields = ["id", "title"]
