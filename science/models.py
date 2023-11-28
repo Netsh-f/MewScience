@@ -5,6 +5,8 @@ from django.db import models
 
 class Works(models.Model):
     data = models.JSONField()
+    def get_work_title(self):
+        return self.data.get("title", "")
 
 
 class Authors(models.Model):
