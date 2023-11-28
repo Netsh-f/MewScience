@@ -5,7 +5,7 @@ from django.db import models
 
 class Works(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=511)
     publication_date = models.DateField()
     language = models.CharField(max_length=2, null=True)
     type = models.CharField(max_length=32)

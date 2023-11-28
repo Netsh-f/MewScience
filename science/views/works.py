@@ -8,6 +8,7 @@
 
 from rest_framework.decorators import api_view
 
+from science.documents import WorkDocument
 from science.models import Works
 from science.request_serializers import SearchWorksSerializer
 from science.serializers import WorksSerializer
@@ -20,5 +21,6 @@ from utils.response_util import api_response
 @validate_request(SearchWorksSerializer)
 def search_work(request, serializer):
     title = serializer.validated_data['title']
-    result_works = Works.objects.filter(data__title__icontains=title).all()
-    return api_response(ErrorCode.SUCCESS, WorksSerializer(result_works, many=True).data)
+    # result_works = Works.objects.filter(data__title__icontains=title).all()
+    result = WorkDocument.search().query("match", title=title).to_queryset().all()
+    return api_response(ErrorCode.SUCCESS, data=WorksSerializer(result, many=True).data)
