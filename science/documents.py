@@ -12,13 +12,28 @@ from science.models import Works
 
 @registry.register_document
 class WorkDocument(Document):
-    language = fields.KeywordField()
-    type = fields.KeywordField()
     authors = fields.NestedField(
         properties={
             'id': fields.KeywordField(),
             'display_name': fields.TextField(),
             'orcid': fields.KeywordField(),
+        }
+    )
+    locations = fields.NestedField(
+        properties={
+            'is_oa': fields.BooleanField(),
+            'landing_page_url': fields.KeywordField(),
+            'pdf_url': fields.KeywordField(),
+            'source': fields.NestedField(
+                properties={
+                    'id': fields.KeywordField(),
+                    'display_name': fields.TextField(),
+                }
+            ),
+            'license': fields.KeywordField(),
+            'version': fields.KeywordField(),
+            'is_accepted': fields.BooleanField(),
+            'is_published': fields.BooleanField(),
         }
     )
 
@@ -34,3 +49,6 @@ class WorkDocument(Document):
             "title",
             "publication_date",
         ]
+
+    class Meta:
+        source = True
