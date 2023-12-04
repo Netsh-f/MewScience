@@ -9,4 +9,5 @@ from rest_framework import serializers
 
 
 class SearchWorksSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=256)
+    title = serializers.CharField(max_length=256, allow_null=True)
+    author = serializers.CharField(max_length=128, allow_null=True)

@@ -5,7 +5,7 @@
 # @FileName: works.py
 ===========================
 """
-
+from elasticsearch_dsl import Q
 from rest_framework.decorators import api_view
 
 from science.documents import WorkDocument
@@ -20,7 +20,17 @@ from utils.response_util import api_response
 @api_view(['GET'])
 @validate_request(SearchWorksSerializer)
 def search_work(request, serializer):
-    title = serializer.validated_data['title']
-    # result_works = Works.objects.filter(data__title__icontains=title).all()
-    result = WorkDocument.search().query("match", title=title).to_queryset().all()
-    return api_response(ErrorCode.SUCCESS, data=WorksSerializer(result, many=True).data)
+    title = serializer.validated_data.get('title')
+    author = serializer.validated_data.get('author')
+    # language = serializer.validated_data.get('language')
+
+    es_query = WorkDocument.search()
+    if title:
+        es_query = es_query.query('match', title=title)
+    if author:
+        es_query = es_query.query('nested', path='authors', query=Q('match', authors__display_name=author))
+
+    # results = es_query.to_queryset().all()
+    es_results = es_query.execute()
+
+    return api_response(ErrorCode.SUCCESS, data=es_results.to_dict())
