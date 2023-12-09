@@ -23,7 +23,6 @@ class Works(models.Model):
     created_date = models.DateField(null=True)
 
 
-
 class Authors(models.Model):
     id = models.BigIntegerField(primary_key=True)
     orcid = models.CharField(max_length=64, null=True)
@@ -32,11 +31,10 @@ class Authors(models.Model):
     cited_by_count = models.IntegerField(null=True)
     summary_stats = models.JSONField(null=True)
     last_known_institution = models.JSONField(null=True)
-    concepts = models.JSONField(null=True)
+    x_concepts = models.JSONField(null=True)
     counts_by_year = models.JSONField(null=True)
     updated_date = models.DateTimeField(null=True)
     created_date = models.DateField(null=True)
-
 
 
 class Sources(models.Model):
@@ -54,7 +52,6 @@ class Sources(models.Model):
     counts_by_year = models.JSONField(null=True)
     updated_date = models.DateTimeField(null=True)
     created_date = models.DateField(null=True)
-
 
 
 class Institutions(models.Model):

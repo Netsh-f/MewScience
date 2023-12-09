@@ -18,15 +18,20 @@ from science.models import Institutions
 data_folder = "H:\openalex-snapshot\data\institutions"
 
 
+def institution_openAlex_to_db(data):
+    institution = {key: data.get(key) for key in ['ror', 'display_name', 'country_code', 'type', 'homepage_url',
+                                                  'image_url', 'works_count', 'cited_by_count', 'geo',
+                                                  'associated_institutions',
+                                                  'counts_by_year', 'x_concepts', 'updated_date', 'created_date',
+                                                  'summary_stats']}
+    institution['id'] = get_id(data.get('id'))
+    return institution
+
+
 def save_to_database(data):
-    institutions = {key: data.get(key) for key in ['ror', 'display_name', 'country_code', 'type', 'homepage_url',
-                                                   'image_url', 'works_count', 'cited_by_count', 'geo',
-                                                   'associated_institutions',
-                                                   'counts_by_year', 'x_concepts', 'updated_date', 'created_date',
-                                                   'summary_stats']}
-    institutions['id'] = get_id(data.get('id'))
+    institution = institution_openAlex_to_db(data)
     try:
-        Institutions.objects.create(**institutions)
+        Institutions.objects.create(**institution)
     except DataError:
         print("drop one line")
 
