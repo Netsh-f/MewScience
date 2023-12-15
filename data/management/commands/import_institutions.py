@@ -15,7 +15,7 @@ from django.db import DataError
 from data.utils.regex_utils import get_id
 from science.models import Institutions
 
-data_folder = "H:\openalex-snapshot\data\institutions"
+data_folder = "E:\openalex-snapshot\data\institutions"
 
 
 def institution_openAlex_to_db(data):

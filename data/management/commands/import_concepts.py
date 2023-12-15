@@ -13,7 +13,7 @@ from data.utils.reader import read_lines_from_openalex_data
 from data.utils.regex_utils import get_id
 from science.models import Concepts
 
-data_folder = "H:\openalex-snapshot\data\concepts"
+data_folder = "E:\openalex-snapshot\data\concepts"
 
 
 def concept_openAlex_to_db(data):
@@ -29,7 +29,7 @@ def save_to_database(data):
     try:
         Concepts.objects.create(**concept)
     except DataError:
-        print("drop one line")
+        pass
 
 
 class Command(BaseCommand):
