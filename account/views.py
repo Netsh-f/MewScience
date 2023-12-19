@@ -20,10 +20,14 @@ def register(request, serializer):
 @api_view(['POST'])
 @validate_request(LoginSerializer)
 def login_view(request, serializer):
-    user = authenticate(request, **serializer.validated_data)
+    user: User = authenticate(request, **serializer.validated_data)
+    data = {
+        'identify': user.userprofile.identity
+    }
+
     if user is not None:
         login(request, user)
-        return api_response(ErrorCode.SUCCESS)
+        return api_response(ErrorCode.SUCCESS, data)
     return api_response(ErrorCode.WRONG_USERNAME_OR_PASSWORD)
 
 
@@ -36,5 +40,5 @@ def logout_view(request):
 @api_view(['POST'])
 @validate_request(GetSomethingSerializer)
 def get_something(request, serializer):
-    name = serializer.validated_data['name']
+    user = request.user
     pass

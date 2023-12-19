@@ -8,13 +8,17 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+from account.models import UserProfile
+
 
 class RegisterSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        UserProfile.objects.create(user=user, identity=UserProfile.Identify.NORMAL, researcher_id=None)
+        return user
 
     username = serializers.CharField(max_length=128)
     password = serializers.CharField(max_length=128)

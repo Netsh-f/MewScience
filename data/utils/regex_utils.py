@@ -9,4 +9,6 @@ import re
 
 
 def get_id(openalex_id):
+    if openalex_id == None:
+        return None
     return re.search(r'\d+$', openalex_id).group()
