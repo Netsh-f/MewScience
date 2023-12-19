@@ -8,6 +8,7 @@
 import gzip
 import json
 import os
+from datetime import datetime
 
 from tqdm import tqdm
 
@@ -48,3 +49,23 @@ def read_lines_from_openalex_data(path, save_to_database):
                     processed_data[relative_path] = processed_lines
                     with open(processed_files_filepath, 'w') as processed_files_file:
                         json.dump(processed_data, processed_files_file, indent=2)
+
+
+def read_lines(path, save, month, day1, day2):
+    for date_folder in os.listdir(path):
+        date_folder_path = os.path.join(path, date_folder)
+        if os.path.isdir(date_folder_path):
+            folder_date = datetime.strptime(date_folder, "updated_date=%Y-%m-%d")
+            if folder_date.month == month and day1 <= folder_date.day <= day2:
+                for part_file in os.listdir(date_folder_path):
+                    part_file_path = os.path.join(date_folder_path, part_file)
+                    relative_path = os.path.relpath(part_file_path, path)
+                    if part_file.endswith(".gz"):
+                        with gzip.open(part_file_path, 'rt') as gz_file:
+                            total_lines = sum(1 for line in gz_file)
+                            with tqdm(total=total_lines, desc=f'Processing {relative_path}', unit=' lines') as pbar:
+                                gz_file.seek(0)
+                                for line in gz_file:
+                                    json_data = json.loads(line)
+                                    save(json_data)
+                                    pbar.update(1)
