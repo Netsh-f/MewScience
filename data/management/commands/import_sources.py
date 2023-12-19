@@ -6,14 +6,19 @@
 ===========================
 """
 
-from django.core.management.base import BaseCommand
-from django.db import DataError
+import json
 
+import requests
+from django.core.management.base import BaseCommand
+
+from MewScience import settings
 from data.utils.reader import read_lines_from_openalex_data
 from data.utils.regex_utils import get_id
-from science.models import Sources
 
-data_folder = "E:\openalex-snapshot\data\sources"
+data_folder = "/data/openalex-snapshot/data/sources"
+
+es_url = settings.CONFIG['ELASTICSEARCH']['hosts'] + "/sources/_create"
+headers = {'Content-Type': 'application/json'}
 
 
 def source_openAlex_to_db(data):
@@ -25,16 +30,16 @@ def source_openAlex_to_db(data):
     return source
 
 
-def save_to_database(data):
-    source = concept_openAlex_to_db(data)
-    try:
-        Sources.objects.create(**source)
-    except DataError:
-        print("drop one line")
+def save_to_es(data):
+    data_to_save = source_openAlex_to_db(data)
+    url = es_url + "/" + data_to_save['id']
+    response = requests.post(url, headers=headers, data=json.dumps(data_to_save))
+    if "error" in response.json():
+        print(response.text)
 
 
 class Command(BaseCommand):
     help = 'script to import sources from openalex'
 
     def handle(self, *args, **options):
-        read_lines_from_openalex_data(data_folder, save_to_database)
+        read_lines_from_openalex_data(data_folder, save_to_es)

@@ -5,15 +5,27 @@
 # @FileName: import_concepts.py
 ===========================
 """
+import json
 
+import requests
 from django.core.management.base import BaseCommand
 from django.db import DataError
 
+from MewScience import settings
 from data.utils.reader import read_lines_from_openalex_data
 from data.utils.regex_utils import get_id
 from science.models import Concepts
 
-data_folder = "E:\openalex-snapshot\data\concepts"
+data_folder = "/data/openalex-snapshot/data/concepts"
+
+es_url = settings.CONFIG['ELASTICSEARCH']['hosts'] + "/concepts/_create"
+headers = {'Content-Type': 'application/json'}
+auth_str = settings.CONFIG['ELASTICSEARCH']['http_auth']
+auth = tuple(eval(auth_str))
+
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def concept_openAlex_to_db(data):
@@ -32,8 +44,16 @@ def save_to_database(data):
         pass
 
 
+def save_to_es(data):
+    data_to_save = concept_openAlex_to_db(data)
+    url = es_url + "/" + data_to_save['id']
+    response = requests.post(url, headers=headers, data=json.dumps(data_to_save))
+    if "error" in response.json():
+        print(response.text)
+
+
 class Command(BaseCommand):
     help = 'script to import concepts from openalex'
 
     def handle(self, *args, **options):
-        read_lines_from_openalex_data(data_folder, save_to_database)
+        read_lines_from_openalex_data(data_folder, save_to_es)
