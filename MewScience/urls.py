@@ -26,7 +26,7 @@ urlpatterns = [
     path("api/portal/", include('portal.urls')),
     path("api/admin/portal/", include('portal.urls')),
     path("api/message/", include('message.urls')),
-    path("api/addition/", include('additional.urls'))
+    path("api/additional/", include('additional.urls'))
 ]
 
 if settings.DEBUG:
