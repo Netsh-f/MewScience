@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "account",
     "science",
     "data",
+    "additional",
 ]
 
 MIDDLEWARE = [
