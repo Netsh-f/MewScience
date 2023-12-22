@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from celery import shared_task
 
 from MewScience import settings
+from MewScience.settings import ES
 from account.models import UserProfile
 from portal.models import Application
 from portal.serializers import ApplicationSerializer
@@ -40,7 +41,23 @@ def claim_portal_view(request):
                     f.write(chunk)
 
             file_url = os.path.join(settings.APPLICATION_URL, f"{user.id}-{research_id}-application.{file_ext}")
-            Application.objects.create(user=user, research_id=research_id, message=message, file=file_url)
+            result = ES.get(index='authors', id=research_id)
+            research_name = result.get('_source').get('display_name')
+
+            if research_name is None:
+                return api_response(ErrorCode.ELASTIC_ERROR)
+
+            if Application.objects.filter(user=user, research_id=research_id).exists():
+                application = Application.objects.filter(user=user, research_id=research_id).first()
+                application.message = message
+                application.file = file_url
+                application.save()
+            else:
+                Application.objects.create(user=user,
+                                           research_id=research_id,
+                                           research_name=research_name,
+                                           message=message,
+                                           file=file_url)
             return api_response(ErrorCode.SUCCESS)
         else:
             return api_response(ErrorCode.INVALID_DATA)
@@ -57,11 +74,11 @@ def get_applications_list(request):
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
-def check_opinion(opinion):
-    return opinion is '1' or \
-        opinion is 'true' or \
-        opinion is 'True' or \
-        opinion is 'agree'
+def check_opinion(opinion:str):
+    return opinion == '1' or \
+        opinion.lower() == 'true' or \
+        opinion.lower() == 'agree' or\
+        opinion.lower() == 'pass'
 
 
 # 审核门户申请
@@ -70,7 +87,10 @@ def update_application_status(request):
     if request.user.is_authenticated:
         application_id = request.data.get('application_id')
         opinion = request.data.get('opinion')
-        application = Application.objects.get(id=application_id)
+        application = Application.objects.filter(id=application_id).first()
+        if application is None:
+            return api_response(ErrorCode.APPLICATION_NOT_FOUND)
+
         if check_opinion(opinion):
             application.status = Application.Status.PASSED
         else:

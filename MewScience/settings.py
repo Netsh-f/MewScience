@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     "science",
     "data",
     "additional",
+    "portal",
+    "message",
 ]
 
 MIDDLEWARE = [

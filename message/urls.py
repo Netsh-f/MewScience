@@ -7,6 +7,8 @@
 
 from django.urls import path
 
+from message.views import get_msg_list
+
 urlpatterns = [
-    path('')
+    path('messages/list', get_msg_list),
 ]
