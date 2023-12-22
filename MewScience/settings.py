@@ -34,7 +34,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Specify media file storage path
-MEDIA_URL = 'media'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, './media')
 
 APPLICATION_ROOT = os.path.join(MEDIA_ROOT, 'application')
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "account",
     "science",
     "data",
+    "additional",
 ]
 
 MIDDLEWARE = [
