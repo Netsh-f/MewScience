@@ -31,6 +31,20 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=128)
     password = serializers.CharField(max_length=128)
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['research_id']
 
-class GetSomethingSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=128)
+class GetInfoSerializer(serializers.ModelSerializer):
+    research_id = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        field = ['username', 'password', 'email', 'first_name', 'last_name']
+
+    def get_research_id(self, obj):
+        try:
+            profile = UserProfile.objects.get(user=obj)
+            return profile.researcher_id
+        except UserProfile.DoesNotExist:
+            return None

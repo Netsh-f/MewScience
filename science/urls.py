@@ -7,8 +7,13 @@
 """
 from django.urls import path
 
-from science.views.works import search_work
+from science.views.authors import search_authors, get_researcher
+from science.views.institutions import get_institution
+from science.views.works import search_works
 
 urlpatterns = [
-    path('works', search_work),
+    path('works', search_works),
+    path('authors', search_authors),
+    path('institutions', get_institution),
+    path('researchers', get_researcher),
 ]
