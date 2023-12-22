@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os.path
 from pathlib import Path
 
 import yaml
@@ -32,6 +32,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# Specify media file storage path
+MEDIA_URL = 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, './media')
+
+APPLICATION_ROOT = os.path.join(MEDIA_ROOT, 'application')
+
+APPLICATION_URL = os.path.join(MEDIA_URL, 'application')
+
+MAX_APPLICATION_FILE_SIZE = 64 * 1024 * 1024
 # Application definition
 
 INSTALLED_APPS = [
