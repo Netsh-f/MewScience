@@ -13,6 +13,7 @@ import os.path
 from pathlib import Path
 
 import yaml
+from elasticsearch import Elasticsearch
 
 # Config File
 with open("config.yaml", 'r') as f:
@@ -151,3 +152,5 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = '*'
 
 SESSION_COOKIE_HTTPONLY = False
+
+ES = Elasticsearch([CONFIG['ELASTICSEARCH']['hosts']])
