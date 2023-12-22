@@ -23,3 +23,7 @@ class SearchAuthorsSerializer(serializers.Serializer):
 
 class GetInstitutionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
+
+
+class GetResearcherSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
