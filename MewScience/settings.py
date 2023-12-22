@@ -42,8 +42,8 @@ APPLICATION_ROOT = os.path.join(MEDIA_ROOT, 'application')
 APPLICATION_URL = os.path.join(MEDIA_URL, 'application')
 
 MAX_APPLICATION_FILE_SIZE = 64 * 1024 * 1024
-# Application definition
 
+# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -69,6 +69,21 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Redis
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/2'
 
 ROOT_URLCONF = "MewScience.urls"
 
