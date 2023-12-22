@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view
 
-from account.request_serializers import RegisterSerializer, LoginSerializer, GetSomethingSerializer
+from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
 from utils.response_util import api_response
@@ -38,7 +38,10 @@ def logout_view(request):
 
 
 @api_view(['POST'])
-@validate_request(GetSomethingSerializer)
-def get_something(request, serializer):
-    user = request.user
-    pass
+def get_info_view(request):
+    if request.user.is_authenticated:
+        user = request.user
+        return api_response(ErrorCode.SUCCESS, data=GetInfoSerializer(user).data)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+
