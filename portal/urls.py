@@ -5,7 +5,10 @@
 # @File    : urls.py
 #
 from django.urls import path
+from views import claim_portal_view, get_applications_list, update_application_status
 
 urlpatterns = [
-    path('register', views.register),
+    path('claim', claim_portal_view),
+    path('applications/list', get_applications_list),
+    path('applications/update', update_application_status)
 ]

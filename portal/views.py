@@ -1,6 +1,7 @@
 import os
 
 from rest_framework.decorators import api_view
+from celery import shared_task
 
 from MewScience import settings
 from account.models import UserProfile
@@ -9,6 +10,7 @@ from portal.serializers import ApplicationSerializer
 from utils.error_code import ErrorCode
 from utils.file_check import file_check
 from utils.response_util import api_response
+from message.models import Message
 
 # 申请认领门户
 @api_view(['POST'])
@@ -70,12 +72,26 @@ def update_application_status(request):
         opinion = request.data.get('opinion')
         application = Application.objects.get(id=application_id)
         if check_opinion(opinion):
-            application.Status = Application.Status.PASSED
-            application.save()
+            application.status = Application.Status.PASSED
         else:
-            application.Status = Application.Status.FAILED
-            application.save()
+            application.status = Application.Status.FAILED
+        application.save()
+        create_message.delay(application.id)
+        return api_response(ErrorCode.SUCCESS)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
-
+# 异步添加信息
+@shared_task
+def create_message(application_id):
+    application = Application.objects.get(id=application_id)
+    if application.Status == Application.Status.PASSED:
+        message = Message.objects.create(
+            content="您关于门户 的申请已通过！",
+            user=application.user,
+        )
+    else:
+        message = Message.objects.create(
+            content="您关于门户 的申请未通过，请联系管理员获取详细信息！",
+            user=application.user
+        )
