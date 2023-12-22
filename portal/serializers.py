@@ -16,4 +16,4 @@ class ClaimPortalSerializer(serializers.Serializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        fields = ['id', 'user', 'reserach_id', 'creat_time']
+        fields = ['id', 'user', 'research_id', 'research_name', 'create_time']

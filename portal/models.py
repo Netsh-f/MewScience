@@ -11,8 +11,9 @@ class Application(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     research_id = models.BigIntegerField()
+    research_name = models.CharField(max_length=127)
     status = models.IntegerField(choices=Status.choices, default=Status.PENDING)
-    creat_time = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField(auto_now_add=True)
     audit_time = models.DateTimeField(auto_now=True)
     message = models.CharField(max_length=1023)
     file = models.CharField(max_length=255)

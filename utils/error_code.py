@@ -16,6 +16,8 @@ class ErrorCode(Enum):
     INVALID_DATA = 1001
     NOT_LOGGED_IN = 1002
     PERMISSION_DENIED = 1003
+    # map all the error that available data can't be found in es
+    ELASTIC_ERROR = 1004
 
     # file
     FILE_NOT_EXIST = 2001
@@ -28,3 +30,4 @@ class ErrorCode(Enum):
 
     # portal
     ALREADY_CLAIM_PORTAL = 20001
+    APPLICATION_NOT_FOUND = 20002
