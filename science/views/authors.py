@@ -51,4 +51,4 @@ def search_authors(request, serializer):
 def get_researcher(request, serializer):
     id = serializer.validated_data.get('id')
     result = ES.get(index='authors', id=id)
-    return api_response(ErrorCode.SUCCESS, result)
+    return api_response(ErrorCode.SUCCESS, result['_source'])

@@ -8,7 +8,7 @@
 from rest_framework.decorators import api_view
 
 from MewScience.settings import ES
-from science.request_serializers import SearchAuthorsSerializer, GetInstitutionSerializer
+from science.request_serializers import GetInstitutionSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
 from utils.response_util import api_response
@@ -19,4 +19,4 @@ from utils.response_util import api_response
 def get_institution(request, serializer):
     id = serializer.validated_data.get('id')
     result = ES.get(index='institutions', id=id)
-    return api_response(ErrorCode.SUCCESS, result)
+    return api_response(ErrorCode.SUCCESS, result['_source'])
