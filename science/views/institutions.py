@@ -20,3 +20,5 @@ def get_institution(request, serializer):
     id = serializer.validated_data.get('id')
     result = ES.get(index='institutions', id=id)
     return api_response(ErrorCode.SUCCESS, result['_source'])
+
+

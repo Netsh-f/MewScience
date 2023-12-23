@@ -7,9 +7,12 @@
 """
 import math
 
+from elasticsearch.exceptions import NotFoundError
 from rest_framework.decorators import api_view
 
-from science.request_serializers import SearchWorksSerializer, IdSerializer
+from data.utils.regex_utils import get_id
+from science.request_serializers import SearchWorksSerializer, IdSerializer, AdvancedSearchWorksSerializer
+from science.utils.openalex import get_work_from_openalex
 from utils.decorators import validate_request
 from MewScience.settings import ES
 from utils.error_code import ErrorCode
@@ -19,10 +22,6 @@ from utils.response_util import api_response
 @api_view(['GET'])
 @validate_request(SearchWorksSerializer)
 def search_works(request, serializer):
-    user = request.user
-    if user.is_authenticated:
-        print("yes")
-
     query = serializer.validated_data.get('query')
     page = serializer.validated_data.get('page')
     page_size = serializer.validated_data.get('page_size')
@@ -77,7 +76,7 @@ def search_works(request, serializer):
         'size': page_size,
         "min_score": min_score,
     }
-    if sort == "relevance":
+    if sort not in ["publication_date", "cited_by_count"]:
         pass
     else:
         query_body["sort"] = [
@@ -94,8 +93,30 @@ def search_works(request, serializer):
 
 
 @api_view(['GET'])
+@validate_request(AdvancedSearchWorksSerializer)
+def advanced_search_works(request, serializer):
+    title = serializer.validated_data.get('title')
+    author = serializer.validated_data.get('author')
+    data = {
+        "title": title,
+        "author": author
+    }
+    print(title)
+    return api_response(ErrorCode.SUCCESS, data)
+
+
+def get_work_from_es_or_openalex(id):
+    work = None
+    try:
+        work = ES.get(index='works', id=id)['_source']
+    except NotFoundError:
+        work = get_work_from_openalex(id)
+    return work
+
+
+@api_view(['GET'])
 @validate_request(IdSerializer)
 def get_work(request, serializer):
     id = serializer.validated_data.get('id')
-    result = ES.get(index='works', id=id)
-    return api_response(ErrorCode.SUCCESS, result['_source'])
+    result = get_work_from_es_or_openalex(id)
+    return api_response(ErrorCode.SUCCESS, result)
