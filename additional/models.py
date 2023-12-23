@@ -1,5 +1,3 @@
-import zlib
-
 from django.db import models
 from rest_framework import serializers
 
@@ -8,7 +6,8 @@ class Project(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=128)
     application_code = models.CharField(max_length=10)
-    authors = models.JSONField()
+    authors = models.TextField()
+    authors_r = models.JSONField(default={})
     supporting_units = models.CharField(max_length=128)
     funds = models.FloatField()
     abstract_c = models.TextField()
@@ -18,7 +17,7 @@ class Project(models.Model):
 class ProjectOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        exclude = ['authors']
+        exclude = ['authors_r']
 
 
 class Patent(models.Model):

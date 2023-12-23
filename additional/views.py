@@ -11,7 +11,7 @@ from utils.response_util import api_response
 @validate_request(ProjectSerializer)
 def get_project(request, serializer):
     id = serializer.validated_data.get('author_id')
-    project_list = Project.objects.filter(authors__contains=[int(id)]).all()
+    project_list = Project.objects.filter(authors_r__contains=[int(id)]).all()
     data = ProjectOutputSerializer(project_list, many=True).data
     return api_response(ErrorCode.SUCCESS, data=data)
 
