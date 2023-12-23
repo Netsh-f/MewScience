@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
+from MewScience import settings
 from account.models import UserProfile
 from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer
 from utils.decorators import validate_request
@@ -15,7 +18,6 @@ def register(request, serializer):
     if User.objects.filter(username=serializer.validated_data.get('username')):
         return api_response(ErrorCode.USERNAME_ALREADY_EXISTS)
     user = serializer.create(serializer.validated_data)
-    UserProfile.objects.create(user=user)
     return api_response(ErrorCode.SUCCESS)
 
 
@@ -39,11 +41,37 @@ def logout_view(request):
     return api_response(ErrorCode.SUCCESS)
 
 
-@api_view(['POST'])
-def get_info_view(request):
+@api_view(['GET'])
+def get_self_info_view(request):
     if request.user.is_authenticated:
         user = request.user
-        return api_response(ErrorCode.SUCCESS, data=GetInfoSerializer(user).data)
+        return api_response(ErrorCode.SUCCESS, data=get_info(user))
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
+@api_view(['GET'])
+def get_info_view(request):
+    user_id = request.GET.get('user_id')
+    if user_id is None:
+        return api_response(ErrorCode.INVALID_DATA)
+
+    user = User.objects.filter(id=user_id).first()
+    if user is None:
+        return api_response(ErrorCode.USER_NOT_EXIST)
+
+    return api_response(ErrorCode.SUCCESS, data=get_info(user))
+
+@api_view(['PUT'])
+def set_admin_view(request):
+    if not settings.DEBUG:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.user.is_authenticated:
+        user = request.user
+        profile = UserProfile.objects.get(user=user)
+        profile.identity=1
+        profile.save()
+        return api_response(ErrorCode.SUCCESS)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+def get_info(user):
+    return GetInfoSerializer(user).data

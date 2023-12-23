@@ -9,6 +9,7 @@
 from rest_framework.decorators import api_view
 
 from MewScience.settings import ES
+from portal.views import get_user_by_portal
 from science.request_serializers import SearchAuthorsSerializer, IdSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
@@ -51,4 +52,6 @@ def search_authors(request, serializer):
 def get_researcher(request, serializer):
     id = serializer.validated_data.get('id')
     result = ES.get(index='authors', id=id)
+    user_dict = get_user_by_portal(id)
+    result['_source'].update(user_dict)
     return api_response(ErrorCode.SUCCESS, result['_source'])
