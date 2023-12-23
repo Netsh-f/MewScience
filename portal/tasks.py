@@ -6,6 +6,7 @@
 #
 from celery import shared_task
 
+from account.models import UserProfile
 from message.models import Message
 from portal.models import Application
 
@@ -18,6 +19,8 @@ def create_message(application_id):
             user=application.user,
             research_name=application.research_name,
         )
+        profile = UserProfile.objects.get(user=application.user)
+        profile.researcher_id=application.research_id
     else:
         message = Message.objects.create(
             user=application.user,
