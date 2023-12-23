@@ -172,3 +172,6 @@ CORS_ALLOW_HEADERS = '*'
 SESSION_COOKIE_HTTPONLY = False
 
 ES = Elasticsearch([CONFIG['ELASTICSEARCH']['hosts']])
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8080']
+
