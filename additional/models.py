@@ -7,7 +7,7 @@ class Project(models.Model):
     title = models.CharField(max_length=128)
     application_code = models.CharField(max_length=10)
     authors = models.TextField()
-    authors_r = models.JSONField(default={})
+    authors_r = models.JSONField(default=dict)
     supporting_units = models.CharField(max_length=128)
     funds = models.FloatField()
     abstract_c = models.TextField()
@@ -22,7 +22,7 @@ class ProjectOutputSerializer(serializers.ModelSerializer):
 
 class Patent(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=64, default='')
+    title = models.TextField()
     authors = models.TextField()
     authors_r = models.JSONField(default=dict)
     year = models.IntegerField()
@@ -38,7 +38,7 @@ class PatentOutputSerializer(serializers.ModelSerializer):
 
 class Reward(models.Model):
     id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=64, default='')
+    title = models.TextField()
     authors = models.TextField()
     authors_r = models.JSONField(default=dict)
     year = models.IntegerField()
