@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view
 
+from account.models import UserProfile
 from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
@@ -13,7 +14,8 @@ from django.contrib.auth.models import User
 def register(request, serializer):
     if User.objects.filter(username=serializer.validated_data.get('username')):
         return api_response(ErrorCode.USERNAME_ALREADY_EXISTS)
-    serializer.create(serializer.validated_data)
+    user = serializer.create(serializer.validated_data)
+    UserProfile.objects.create(user=user)
     return api_response(ErrorCode.SUCCESS)
 
 
@@ -22,7 +24,7 @@ def register(request, serializer):
 def login_view(request, serializer):
     user: User = authenticate(request, **serializer.validated_data)
     data = {
-        'identify': user.userprofile.identity
+        'identify': UserProfile.objects.get(user=user).identity
     }
 
     if user is not None:
