@@ -146,6 +146,7 @@ def advanced_search_works(request, serializer):
             }
         ]
     result = ES.search(index='works', body=query_body)
+    result['total']['page_num'] = math.ceil(result['total']['value'] / page_size)
     return api_response(ErrorCode.SUCCESS, result)
 
 

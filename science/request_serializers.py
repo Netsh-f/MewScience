@@ -32,6 +32,7 @@ class SearchAuthorsSerializer(serializers.Serializer):
     institution = serializers.CharField(max_length=128, allow_null=True)
     page = serializers.IntegerField(allow_null=True)
     page_size = serializers.IntegerField(allow_null=True)
+    min_score = serializers.IntegerField(allow_null=True)
 
 
 class IdSerializer(serializers.Serializer):

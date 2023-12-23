@@ -5,6 +5,7 @@
 # @FileName: authors.py
 ===========================
 """
+import math
 
 from rest_framework.decorators import api_view
 
@@ -23,28 +24,32 @@ def search_authors(request, serializer):
     institution = serializer.validated_data.get('institution')
     page = serializer.validated_data.get('page')
     page_size = serializer.validated_data.get('page_size')
-    if institution is None:
-        institution = ""
+    min_score = serializer.validated_data.get('min_score')
     if page is None or page <= 0:
         page = 1
     if page_size is None or 25 < page_size <= 0:
         page_size = 10
+    if min_score is None or min_score < 0:
+        min_score = 10
 
     query_body = {
         'query': {
             'bool': {
                 'should': [
-                    {'match': {'display_name': name}},
-                    {'match': {'last_known_institution.display_name': institution}},
+                    {'match': {'display_name': {'query': name, 'boost': 1.3}}},
                 ],
                 'minimum_should_match': 1,
             }
         },
         'from': (page - 1) * page_size,
-        'size': page_size
+        'size': page_size,
+        "min_score": min_score,
     }
-    result = ES.search(index='authors', body=query_body)
-    return api_response(ErrorCode.SUCCESS, data=result.get('hits'))
+    if institution is not None:
+        query_body['query']['bool']['should'].append({'match': {'last_known_institution.display_name': institution}})
+    result = ES.search(index='authors', body=query_body).get('hits')
+    result['total']['page_num'] = math.ceil(result['total']['value'] / page_size)
+    return api_response(ErrorCode.SUCCESS, data=result)
 
 
 @api_view(['GET'])
