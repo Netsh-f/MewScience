@@ -10,7 +10,7 @@ import math
 from elasticsearch.exceptions import NotFoundError
 from rest_framework.decorators import api_view
 
-from science.request_serializers import SearchWorksSerializer, IdSerializer
+from science.request_serializers import SearchWorksSerializer, IdSerializer, AdvancedSearchWorksSerializer
 from science.utils.openalex import get_work_from_openalex
 from utils.decorators import validate_request
 from MewScience.settings import ES
@@ -91,20 +91,62 @@ def search_works(request, serializer):
     return api_response(ErrorCode.SUCCESS, data=result)
 
 
-@api_view(['POST'])
-def advanced_search_works(request):
-    condition_list = request.data
-    query_body = {
-        "bool": {
-            "must": [],
-            "should": [],
-            "must_not": []
-        }
-    }
-    # for condition in condition_list:
-    #     if condition == 'title':
+def get_field_name(name):
+    if name in ['title']:
+        return name
+    elif name == 'author':
+        return 'authorships.author.display_name'
 
-    return api_response(ErrorCode.SUCCESS)
+
+@api_view(['POST'])
+@validate_request(AdvancedSearchWorksSerializer)
+def advanced_search_works(request, serializer):
+    condition_list = serializer.validated_data.get('query')
+    page = serializer.validated_data.get('page')
+    page_size = serializer.validated_data.get('page_size')
+    min_score = serializer.validated_data.get('min_score')
+    sort = serializer.validated_data.get('sort')
+    order = serializer.validated_data.get('order')
+    if page is None or page <= 0:
+        page = 1
+    if page_size is None or 25 < page_size <= 0:
+        page_size = 10
+    if min_score is None or min_score < 0:
+        min_score = 10
+    if sort is None:
+        sort = "relevance"
+    if order is None:
+        order = "desc"
+    query_body = {
+        "query": {
+            "bool": {
+                "must": [],
+                "should": [],
+                "must_not": []
+            }
+        },
+        'from': (page - 1) * page_size,
+        'size': page_size,
+        "min_score": min_score,
+    }
+    for condition in condition_list:
+        query_body['query']['bool'][condition['logic']].append({
+            'match': {
+                get_field_name(condition['field']): condition['query']
+            }
+        })
+    if sort not in ["publication_date", "cited_by_count"]:
+        pass
+    else:
+        query_body["sort"] = [
+            {
+                sort: {
+                    "order": order
+                }
+            }
+        ]
+    result = ES.search(index='works', body=query_body)
+    return api_response(ErrorCode.SUCCESS, result)
 
 
 def get_work_from_es_or_openalex(id):

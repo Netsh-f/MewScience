@@ -22,6 +22,11 @@ class GetHotSerializer(serializers.Serializer):
     sort = serializers.CharField(max_length=32, allow_null=True)
 
 
+class AdvancedSearchWorksSerializer(serializers.Serializer):
+    query = serializers.ListField()
+    min_score = serializers.IntegerField(allow_null=True)
+
+
 class SearchAuthorsSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=128)
     institution = serializers.CharField(max_length=128, allow_null=True)
