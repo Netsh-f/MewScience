@@ -40,7 +40,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['identity', 'researcher_id', 'follow_list']
+        fields = ['identity', 'researcher_id', 'follow_list', 'intro']
 
 class GetInfoSerializer(serializers.ModelSerializer):
     user_profile = serializers.SerializerMethodField()
