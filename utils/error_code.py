@@ -27,6 +27,7 @@ class ErrorCode(Enum):
     # account
     USERNAME_ALREADY_EXISTS = 10001
     WRONG_USERNAME_OR_PASSWORD = 10002
+    USER_NOT_EXIST = 10003
 
     # portal
     ALREADY_CLAIM_PORTAL = 20001

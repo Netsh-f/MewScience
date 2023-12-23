@@ -14,7 +14,7 @@ from portal.tasks import create_message
 
 # 申请认领门户
 @api_view(['POST'])
-def claim_portal_view(request):
+def claim_portal(request):
     if request.user.is_authenticated:
         user = request.user
         profile = UserProfile.objects.get(user=user)
@@ -63,7 +63,36 @@ def claim_portal_view(request):
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
-# 获取门户列表
+# 获取门户对应用户
+def get_user_by_portal(research_id)->dict:
+    if research_id is None:
+        return {}
+    profile = UserProfile.objects.filter(researcher_id=research_id).first()
+    if profile is None:
+        return {'claim_info':{'has_been_claimed': False}}
+    else:
+        return {'claim_info': {
+            'has_been_claimed': True,
+            'user_id': profile.user_id,
+            'user_name': profile.user.username,
+        }}
+
+# 关注指定门户
+@api_view(['PUT'])
+def follow_portal(request):
+    if request.user.is_authenticated:
+        user = request.user
+        research_id = request.data.get('research_id')
+        research_name = request.data.get('research_name')
+        if research_id is None or research_name is None:
+            return api_response(ErrorCode.INVALID_DATA)
+        else:
+            profile = UserProfile.objects.get(user=user)
+            profile.add_follow_list(research_id, research_name)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+
+# 获取申请列表
 @api_view(['GET'])
 def get_applications_list(request):
     if request.user.is_authenticated:
@@ -73,6 +102,7 @@ def get_applications_list(request):
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
+# 获取指定认领申请
 @api_view(['GET'])
 def get_specified_application(request):
     if request.user.is_authenticated:
@@ -111,4 +141,5 @@ def update_application_status(request):
         return api_response(ErrorCode.SUCCESS)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
+
 
