@@ -20,6 +20,6 @@ urlpatterns = [
     path('researchers', get_researcher),
     path('concepts', get_concept),
     path('work', get_work),
-    path('works/advanced_search', advanced_search_works),
+    path('works/advanced', advanced_search_works),
     path('hot', get_hot),
 ]

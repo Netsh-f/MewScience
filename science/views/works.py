@@ -10,8 +10,7 @@ import math
 from elasticsearch.exceptions import NotFoundError
 from rest_framework.decorators import api_view
 
-from data.utils.regex_utils import get_id
-from science.request_serializers import SearchWorksSerializer, IdSerializer, AdvancedSearchWorksSerializer
+from science.request_serializers import SearchWorksSerializer, IdSerializer
 from science.utils.openalex import get_work_from_openalex
 from utils.decorators import validate_request
 from MewScience.settings import ES
@@ -92,17 +91,20 @@ def search_works(request, serializer):
     return api_response(ErrorCode.SUCCESS, data=result)
 
 
-@api_view(['GET'])
-@validate_request(AdvancedSearchWorksSerializer)
-def advanced_search_works(request, serializer):
-    title = serializer.validated_data.get('title')
-    author = serializer.validated_data.get('author')
-    data = {
-        "title": title,
-        "author": author
+@api_view(['POST'])
+def advanced_search_works(request):
+    condition_list = request.data
+    query_body = {
+        "bool": {
+            "must": [],
+            "should": [],
+            "must_not": []
+        }
     }
-    print(title)
-    return api_response(ErrorCode.SUCCESS, data)
+    # for condition in condition_list:
+    #     if condition == 'title':
+
+    return api_response(ErrorCode.SUCCESS)
 
 
 def get_work_from_es_or_openalex(id):
