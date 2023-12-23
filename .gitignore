@@ -141,6 +141,5 @@ cython_debug/
 create_mig.py
 
 # Deployment files
-
 .idea/
 config.yaml

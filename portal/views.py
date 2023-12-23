@@ -6,7 +6,7 @@ from MewScience import settings
 from MewScience.settings import ES
 from account.models import UserProfile
 from portal.models import Application
-from portal.serializers import ApplicationSerializer
+from portal.serializers import ApplicationSimpleSerializer, ApplicationDetailedSerializer
 from utils.error_code import ErrorCode
 from utils.file_check import file_check
 from utils.response_util import api_response
@@ -18,7 +18,7 @@ def claim_portal_view(request):
     if request.user.is_authenticated:
         user = request.user
         profile = UserProfile.objects.get(user=user)
-        if profile.researcher_id is not None:
+        if profile.researcher_id != 0:
             return api_response(ErrorCode.ALREADY_CLAIM_PORTAL)
 
         research_id = request.data.get('research_id')
@@ -69,7 +69,19 @@ def get_applications_list(request):
     if request.user.is_authenticated:
         application_list = Application.objects.filter(status=Application.Status.PENDING)
         return api_response(ErrorCode.SUCCESS,
-                            data=ApplicationSerializer(application_list, many=True).data)
+                            data=ApplicationSimpleSerializer(application_list, many=True).data)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+
+@api_view(['GET'])
+def get_specified_application(request):
+    if request.user.is_authenticated:
+        application_id = request.GET.get('id')
+        application = Application.objects.filter(id=application_id).first()
+        if application is None:
+            return api_response(ErrorCode.APPLICATION_NOT_FOUND)
+        return api_response(ErrorCode.SUCCESS,
+                            data=ApplicationDetailedSerializer(application).data)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
