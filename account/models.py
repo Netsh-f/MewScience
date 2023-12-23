@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from typing import List, Tuple
 
-
+default_intro = '暂无简介'
 class UserProfile(models.Model):
     class Identify(models.IntegerChoices):
         NORMAL = 0,
@@ -27,3 +27,4 @@ class UserProfile(models.Model):
     identity = models.PositiveSmallIntegerField(choices=Identify.choices, default=Identify.NORMAL)
     researcher_id = models.BigIntegerField(null=True)
     follow_list = models.TextField(null=True)
+    intro = models.TextField(default=default_intro)

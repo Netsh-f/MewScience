@@ -18,7 +18,7 @@ def claim_portal(request):
     if request.user.is_authenticated:
         user = request.user
         profile = UserProfile.objects.get(user=user)
-        if profile.researcher_id != 0:
+        if profile.researcher_id is not None:
             return api_response(ErrorCode.ALREADY_CLAIM_PORTAL)
 
         research_id = request.data.get('research_id')
@@ -75,6 +75,7 @@ def get_user_by_portal(research_id)->dict:
             'has_been_claimed': True,
             'user_id': profile.user_id,
             'user_name': profile.user.username,
+            'user_intro': profile.intro,
         }}
 
 # 关注指定门户
