@@ -25,7 +25,7 @@ class Patent(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=64, default='')
     authors = models.TextField()
-    authors_r = models.JSONField(default={})
+    authors_r = models.JSONField(default=dict)
     year = models.IntegerField()
     number = models.CharField(max_length=32, default='')
     authorized_institutions = models.CharField(max_length=128, default='')
@@ -41,7 +41,7 @@ class Reward(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=64, default='')
     authors = models.TextField()
-    authors_r = models.JSONField(default={})
+    authors_r = models.JSONField(default=dict)
     year = models.IntegerField()
     award_institution = models.CharField(max_length=128, default='')
 
