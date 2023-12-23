@@ -25,7 +25,8 @@ urlpatterns = [
     path("api/science/", include('science.urls')),
     path("api/portal/", include('portal.urls')),
     path("api/admin/portal/", include('portal.urls')),
-    path("api/message/", include('message.urls'))
+    path("api/message/", include('message.urls')),
+    path("api/additional/", include('additional.urls'))
 ]
 
 if settings.DEBUG:

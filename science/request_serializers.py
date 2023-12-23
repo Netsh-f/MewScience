@@ -21,9 +21,5 @@ class SearchAuthorsSerializer(serializers.Serializer):
     page_size = serializers.IntegerField(allow_null=True)
 
 
-class GetInstitutionSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-
-
-class GetResearcherSerializer(serializers.Serializer):
+class IdSerializer(serializers.Serializer):
     id = serializers.IntegerField()

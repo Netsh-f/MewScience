@@ -9,7 +9,7 @@
 from rest_framework.decorators import api_view
 
 from MewScience.settings import ES
-from science.request_serializers import SearchAuthorsSerializer, GetResearcherSerializer
+from science.request_serializers import SearchAuthorsSerializer, IdSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
 from utils.response_util import api_response
@@ -47,7 +47,7 @@ def search_authors(request, serializer):
 
 
 @api_view(['GET'])
-@validate_request(GetResearcherSerializer)
+@validate_request(IdSerializer)
 def get_researcher(request, serializer):
     id = serializer.validated_data.get('id')
     result = ES.get(index='authors', id=id)

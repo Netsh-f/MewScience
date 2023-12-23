@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 j = json.loads(line)
                 data.append(Project(id=int(j["ratifyNo"]), title=j["projectName"], application_code=j["code"],
                                     authors=json.loads('{}'), supporting_units=j["dependUnit"], funds=float(j["supportNum"]),
-                                    abstract_c=zlib.compress(bytes(j['projectAbstractC'], 'utf-8')),
-                                    abstract_e=zlib.compress(bytes(j['projectAbstractE'], 'utf-8'))))
+                                    abstract_c=j['projectAbstractC'],
+                                    abstract_e=j['projectAbstractE']))
         Project.objects.bulk_create(data)
         print("Success")
