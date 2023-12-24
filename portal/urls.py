@@ -6,13 +6,13 @@
 #
 from django.urls import path
 
-from portal.views import claim_portal, \
-    get_applications_list, update_application_status, \
-    get_specified_application
+from portal import views
 
 urlpatterns = [
-    path('claim', claim_portal),
-    path('applications/list', get_applications_list),
-    path('applications/get', get_specified_application),
-    path('applications/update', update_application_status)
+    path('claim', views.claim_portal),
+    path('applications/list', views.get_applications_list),
+    path('applications/get', views.get_specified_application),
+    path('applications/update', views.update_application_status),
+    path('follow', views.follow_portal),
+    path('unfollow', views.unfollow_portal),
 ]

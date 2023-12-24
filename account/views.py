@@ -88,3 +88,11 @@ def update_self_intro(request):
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
+# 获取关注列表
+@api_view(['GET'])
+def get_follow_list(request):
+    if request.user.is_authenticated:
+        profile = UserProfile.objects.get(user=request.user)
+        return api_response(ErrorCode.SUCCESS, profile.follow_list)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)

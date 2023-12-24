@@ -32,3 +32,4 @@ class ErrorCode(Enum):
     # portal
     ALREADY_CLAIM_PORTAL = 20001
     APPLICATION_NOT_FOUND = 20002
+    ALREADY_FOLLOWED = 20003

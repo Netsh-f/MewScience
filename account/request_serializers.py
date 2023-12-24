@@ -32,11 +32,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128)
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    follow_list = serializers.SerializerMethodField()
-
-    def get_follow_list(self, instance):
-        research_list = instance.get_follow_list()
-        return research_list
 
     class Meta:
         model = UserProfile
