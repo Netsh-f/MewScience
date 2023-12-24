@@ -19,7 +19,11 @@ class SearchWorksSerializer(serializers.Serializer):
 
 class GetHotSerializer(serializers.Serializer):
     index = serializers.CharField(max_length=32)
-    sort = serializers.CharField(max_length=32, allow_null=True)
+
+
+class AdvancedSearchWorksSerializer(serializers.Serializer):
+    query = serializers.ListField()
+    min_score = serializers.IntegerField(allow_null=True)
 
 
 class SearchAuthorsSerializer(serializers.Serializer):
@@ -27,6 +31,7 @@ class SearchAuthorsSerializer(serializers.Serializer):
     institution = serializers.CharField(max_length=128, allow_null=True)
     page = serializers.IntegerField(allow_null=True)
     page_size = serializers.IntegerField(allow_null=True)
+    min_score = serializers.IntegerField(allow_null=True)
 
 
 class IdSerializer(serializers.Serializer):

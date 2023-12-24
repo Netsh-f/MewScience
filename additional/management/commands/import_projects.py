@@ -1,4 +1,3 @@
-import zlib
 import json
 
 from django.core.management.base import BaseCommand
@@ -25,9 +24,13 @@ class Command(BaseCommand):
                 authors = ""
                 for par in j["participatantsList"]:
                     authors += par['result'][1] + ";"
-                data.append(Project(id=int(j["ratifyNo"]), title=j["projectName"], application_code=j["code"],
+                data.append(Project(id=int(j["ratifyNo"]),
+                                    title=j["projectName"],
+                                    application_code=j["code"],
                                     authors=authors,
-                                    authors_r=project_authors[j["ratifyNo"]], supporting_units=j["dependUnit"], funds=float(j["supportNum"]),
+                                    authors_r=project_authors[j["ratifyNo"]],
+                                    supporting_units=j["dependUnit"],
+                                    funds=float(j["supportNum"]),
                                     abstract_c=j['projectAbstractC'],
                                     abstract_e=j['projectAbstractE']))
         Project.objects.bulk_create(data)
