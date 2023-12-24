@@ -33,7 +33,7 @@ class Patent(models.Model):
 class PatentOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patent
-        exclude = ['authors_r', 'id']
+        exclude = ['authors_r']
 
 
 class Reward(models.Model):
@@ -48,4 +48,4 @@ class Reward(models.Model):
 class RewardOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reward
-        exclude = ['authors_r', 'id']
+        exclude = ['authors_r']

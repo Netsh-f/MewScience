@@ -19,7 +19,6 @@ class SearchWorksSerializer(serializers.Serializer):
 
 class GetHotSerializer(serializers.Serializer):
     index = serializers.CharField(max_length=32)
-    sort = serializers.CharField(max_length=32, allow_null=True)
 
 
 class AdvancedSearchWorksSerializer(serializers.Serializer):

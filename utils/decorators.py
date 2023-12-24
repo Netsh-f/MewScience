@@ -22,8 +22,7 @@ def validate_request(serializer_class):
             if serializer.is_valid():
                 return view_func(request, serializer=serializer, *args, **kwargs)
             else:
-                print(serializer.errors)
-                return api_response(ErrorCode.INVALID_DATA, "invalid data")
+                return api_response(ErrorCode.INVALID_DATA, f"invalid data: {serializer.errors}")
 
         return wrapped_view
 

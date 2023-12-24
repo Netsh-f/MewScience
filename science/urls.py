@@ -7,7 +7,7 @@
 """
 from django.urls import path
 
-from science.views.authors import search_authors, get_researcher
+from science.views.authors import search_authors, get_researcher, get_related_researcher
 from science.views.concepts import get_concept
 from science.views.institutions import get_institution
 from science.views.sources import get_hot
@@ -22,4 +22,5 @@ urlpatterns = [
     path('work', get_work),
     path('works/advanced', advanced_search_works),
     path('hot', get_hot),
+    path('researchers/related', get_related_researcher),
 ]

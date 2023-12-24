@@ -5,6 +5,7 @@
 # @FileName: authors.py
 ===========================
 """
+import json
 import math
 
 from rest_framework.decorators import api_view
@@ -12,6 +13,7 @@ from rest_framework.decorators import api_view
 from MewScience.settings import ES
 from additional.models import Patent, PatentOutputSerializer, Reward, RewardOutputSerializer, Project, \
     ProjectOutputSerializer
+from data.utils.regex_utils import get_id
 from portal.views import get_user_by_portal
 from science.request_serializers import SearchAuthorsSerializer, IdSerializer
 from utils.decorators import validate_request
@@ -70,3 +72,54 @@ def get_researcher(request, serializer):
     result['projects'] = ProjectOutputSerializer(projects, many=True).data
 
     return api_response(ErrorCode.SUCCESS, result)
+
+
+@api_view(['GET'])
+@validate_request(IdSerializer)
+def get_related_researcher(request, serializer):
+    id = serializer.validated_data.get('id')
+    # query_body = {
+    #     "query": {
+    #         "match": {
+    #             "authorships.author.id": {
+    #                 "query": "https://openalex.org/A" + str(id)
+    #             }
+    #         }
+    #     },
+    #     "min_score": 10,
+    #     "size": 50,
+    # }
+    query_body = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {"term": {"authorships.author.id": f"{id}"}}
+                ]
+            }
+        },
+        "size": 50
+    }
+
+    works = ES.search(index='works', body=query_body).get('hits').get('hits')
+    researchers_result = {}
+    institutions_result = {}
+    for work in works:
+        for author_info in work.get('_source').get('authorships'):
+            author_institutions = author_info.get('institutions')
+            author = author_info.get('author')
+            for institution in author_institutions:
+                institution_id = get_id(institution.get('id'))
+                if institution_id not in institutions_result:
+                    institutions_result[institution_id] = institution
+                    institutions_result[institution_id]['times'] = 1
+                else:
+                    institutions_result[institution_id]['times'] += 1
+
+            author_id = get_id(author.get('id'))
+            if author_id not in researchers_result:
+                researchers_result[author_id] = author
+                researchers_result[author_id]['times'] = 1
+            else:
+                researchers_result[author_id]['times'] += 1
+    return api_response(ErrorCode.SUCCESS,
+                        {"works": works, "researchers": researchers_result, "institutions": institutions_result})
