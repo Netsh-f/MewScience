@@ -4,15 +4,15 @@ from django.db import models
 # Create your models here.
 class Message(models.Model):
     class MsgType(models.IntegerChoices):
-        CLAIM_REVIEW = 0 # available research_id
-        FOLLOW_UPDATE = 1
-        WORKS_TRANSFER = 2
-        TRANSFER_RESPONSE = 3 # available research_id
+        CLAIM_REVIEW = 0, 'Claim Review'# available research_id
+        FOLLOW_UPDATE = 1, 'Follow Update'
+        WORKS_TRANSFER = 2, 'Works Transfer'
+        TRANSFER_RESPONSE = 3, 'Transfer Response' # available research_id
 
     class WorkType(models.IntegerChoices):
-        PATENT = 0
-        PROJECT = 1
-        REWARD = 2
+        PATENT = 0, 'Patent'
+        PROJECT = 1, 'Project'
+        REWARD = 2, 'Reward'
 
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

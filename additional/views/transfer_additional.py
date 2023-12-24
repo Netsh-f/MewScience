@@ -16,7 +16,7 @@ from utils.login_check import login_required
 from utils.response_util import api_response
 
 
-def get_portal_by_user(user: User):
+def get_portal_by_user(user: User)->str:
     profile = UserProfile.objects.get(user=user)
     return profile.researcher_id
 
@@ -99,7 +99,7 @@ def transfer_reward(request):
 
 @api_view(['PUT'])
 @login_required
-def process_patent_tran(request):
+def process_patent_trans(request):
     opinion = request.data.get('opinion')
     transfer_id = request.data.get('transfer_id')
     patent_id = request.data.get('patent_id')
@@ -115,9 +115,8 @@ def process_patent_tran(request):
     if portal_id is None:
         return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
 
-    try:
-        transfer = User.objects.get(id=transfer_id)
-    except:
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
         return api_response(ErrorCode.USER_NOT_EXIST)
 
     name = get_researcher_name_by_id(portal_id)
@@ -126,7 +125,7 @@ def process_patent_tran(request):
         patent.authors_r = [portal_id]
         patent.save()
 
-    Message.objects.create(user=transfer,
+    Message.objects.create(user=transfer_user,
                            research_id= -1 if check_opinion(opinion) else -2,
                            link_content=name,
                            link_id=portal_id,
@@ -136,7 +135,7 @@ def process_patent_tran(request):
 
 @api_view(['PUT'])
 @login_required
-def process_project_tran(request):
+def process_project_trans(request):
     opinion = request.data.get('opinion')
     transfer_id = request.data.get('transfer_id')
     project_id = request.data.get('project_id')
@@ -152,9 +151,8 @@ def process_project_tran(request):
     if portal_id is None:
         return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
 
-    try:
-        transfer = User.objects.get(id=transfer_id)
-    except:
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
         return api_response(ErrorCode.USER_NOT_EXIST)
 
     name = get_researcher_name_by_id(portal_id)
@@ -163,7 +161,7 @@ def process_project_tran(request):
         project.authors_r = [portal_id]
         project.save()
 
-    Message.objects.create(user=transfer,
+    Message.objects.create(user=transfer_user,
                            research_id= -1 if check_opinion(opinion) else -2,
                            link_content=name,
                            link_id=portal_id,
@@ -174,7 +172,7 @@ def process_project_tran(request):
 
 @api_view(['PUT'])
 @login_required
-def process_reward_tran(request):
+def process_reward_trans(request):
     opinion = request.data.get('opinion')
     transfer_id = request.data.get('transfer_id')
     reward_id = request.data.get('reward_id')
@@ -190,9 +188,8 @@ def process_reward_tran(request):
     if portal_id is None:
         return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
 
-    try:
-        transfer = User.objects.get(id=transfer_id)
-    except:
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
         return api_response(ErrorCode.USER_NOT_EXIST)
 
     name = get_researcher_name_by_id(portal_id)
@@ -201,7 +198,7 @@ def process_reward_tran(request):
         reward.authors_r = [portal_id]
         reward.save()
 
-    Message.objects.create(user=transfer,
+    Message.objects.create(user=transfer_user,
                            research_id=-1 if check_opinion(opinion) else -2,
                            link_content=name,
                            link_id=portal_id,

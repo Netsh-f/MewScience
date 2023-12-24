@@ -17,6 +17,9 @@ urlpatterns = [
     path('project/id', get_additional.get_project_by_id),
     path('patent/id', get_additional.get_patent_by_id),
     path('rewards/transfer', transfer_additional.transfer_reward),
+    path('rewards/process_trans', transfer_additional.process_reward_trans),
     path('projects/transfer', transfer_additional.transfer_project),
-    path('patents/transfer', transfer_additional.transfer_patent)
+    path('projects/process_trans', transfer_additional.process_project_trans),
+    path('patents/transfer', transfer_additional.transfer_patent),
+    path('patents/process_trans', transfer_additional.process_patent_trans),
 ]
