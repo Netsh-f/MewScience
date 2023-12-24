@@ -12,6 +12,10 @@ from utils.file_check import file_check
 from utils.response_util import api_response
 from portal.tasks import create_message
 
+def get_researcher_name_by_id(researcher_id):
+    result = ES.get(index='authors', id=researcher_id)
+    return result.get('_source').get('display_name')
+
 # 申请认领门户
 @api_view(['POST'])
 def claim_portal(request):
@@ -40,8 +44,7 @@ def claim_portal(request):
                     f.write(chunk)
 
             file_url = os.path.join(settings.APPLICATION_URL, f"{user.id}-{research_id}-application.{file_ext}")
-            result = ES.get(index='authors', id=research_id)
-            research_name = result.get('_source').get('display_name')
+            research_name = get_researcher_name_by_id(research_id)
 
             if research_name is None:
                 return api_response(ErrorCode.ELASTIC_ERROR)
@@ -84,14 +87,35 @@ def follow_portal(request):
     if request.user.is_authenticated:
         user = request.user
         research_id = request.data.get('research_id')
-        research_name = request.data.get('research_name')
+        research_name = get_researcher_name_by_id(research_id)
         if research_id is None or research_name is None:
             return api_response(ErrorCode.INVALID_DATA)
         else:
             profile = UserProfile.objects.get(user=user)
-            profile.add_follow_list(research_id, research_name)
+            if profile.follow_list.get(research_id) is not None:
+                return api_response(ErrorCode.ALREADY_FOLLOWED)
+            profile.follow_list[research_id] = research_name
+            profile.save()
+        return api_response(ErrorCode.SUCCESS)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
+
+
+# 取消关注门户
+@api_view(['PUT'])
+def unfollow_portal(request):
+    if request.user.is_authenticated:
+        research_id = request.data.get('research_id')
+        if research_id is None:
+            return api_response(ErrorCode.INVALID_DATA)
+        profile = UserProfile.objects.get(user=request.user)
+        del profile.follow_list[research_id]
+        profile.save()
+        return api_response(ErrorCode.SUCCESS)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+
+
 
 # 获取申请列表
 @api_view(['GET'])
