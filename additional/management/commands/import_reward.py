@@ -29,7 +29,8 @@ class Command(BaseCommand):
                 else:
                     print("Miss")
                     authors_r = []
-                data.append(Reward(title=j["zhTitle"],
+                data.append(Reward(id=j['reward_id'],
+                                   title=j["zhTitle"],
                                    authors=j["authors"],
                                    authors_r=authors_r,
                                    year=int(j["publishYear"]),

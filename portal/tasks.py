@@ -17,13 +17,15 @@ def create_message(application_id):
     if application.status == Application.Status.PASSED:
         message = Message.objects.create(
             user=application.user,
-            research_name=application.research_name,
+            link_content=application.research_name,
+            link_id=application.research_id
         )
         profile = UserProfile.objects.get(user=application.user)
         profile.researcher_id=application.research_id
     else:
         message = Message.objects.create(
             user=application.user,
-            research_name=application.research_name,
-            research_id=-2
+            research_id=-2,
+            link_content=application.research_name,
+            link_id=application.research_id
         )

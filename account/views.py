@@ -73,5 +73,26 @@ def set_admin_view(request):
         return api_response(ErrorCode.SUCCESS)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
+
 def get_info(user):
     return GetInfoSerializer(user).data
+
+@api_view(['PUT'])
+def update_self_intro(request):
+    if request.user.is_authenticated:
+        profile = UserProfile.objects.get(user=request.user)
+        intro = request.data.get('intro')
+        profile.intro = intro
+        profile.save()
+        return api_response(ErrorCode.SUCCESS)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)
+
+# 获取关注列表
+@api_view(['GET'])
+def get_follow_list(request):
+    if request.user.is_authenticated:
+        profile = UserProfile.objects.get(user=request.user)
+        return api_response(ErrorCode.SUCCESS, profile.follow_list)
+    else:
+        return api_response(ErrorCode.NOT_LOGGED_IN)

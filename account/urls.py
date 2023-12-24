@@ -16,4 +16,6 @@ urlpatterns = [
     path('self-info', views.get_self_info_view),
     path('info', views.get_info_view),
     path('set-admin', views.set_admin_view),
+    path('update-intro', views.update_self_intro),
+    path('follow-list', views.get_follow_list),
 ]

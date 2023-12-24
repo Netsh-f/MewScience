@@ -21,6 +21,8 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'autosc': {
         'task': 'data.tasks.update_data',
+        # debug
         'schedule': crontab(),
+        # 'schedule': crontab(day_of_week='mon', hour=str(0), minute=str(0)),
     },
 }

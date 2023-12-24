@@ -5,8 +5,12 @@
 # @File    : tasks.py
 #
 from celery import shared_task
+from django.core.cache import cache
+from django.utils import timezone
 
 
 @shared_task
 def update_data():
-    pass
+    last_beat_time = cache.get('last_beat_time')
+    current_time = timezone.now()
+    cache.set('last_beat_time', current_time)
