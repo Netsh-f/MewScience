@@ -8,6 +8,7 @@ from account.models import UserProfile
 from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
+from utils.login_check import login_required
 from utils.response_util import api_response
 from django.contrib.auth.models import User
 
@@ -42,12 +43,10 @@ def logout_view(request):
 
 
 @api_view(['GET'])
+@login_required
 def get_self_info_view(request):
-    if request.user.is_authenticated:
-        user = request.user
-        return api_response(ErrorCode.SUCCESS, data=get_info(user))
-    else:
-        return api_response(ErrorCode.NOT_LOGGED_IN)
+    user = request.user
+    return api_response(ErrorCode.SUCCESS, data=get_info(user))
 
 @api_view(['GET'])
 def get_info_view(request):
@@ -78,21 +77,17 @@ def get_info(user):
     return GetInfoSerializer(user).data
 
 @api_view(['PUT'])
+@login_required
 def update_self_intro(request):
-    if request.user.is_authenticated:
-        profile = UserProfile.objects.get(user=request.user)
-        intro = request.data.get('intro')
-        profile.intro = intro
-        profile.save()
-        return api_response(ErrorCode.SUCCESS)
-    else:
-        return api_response(ErrorCode.NOT_LOGGED_IN)
+    profile = UserProfile.objects.get(user=request.user)
+    intro = request.data.get('intro')
+    profile.intro = intro
+    profile.save()
+    return api_response(ErrorCode.SUCCESS)
 
 # 获取关注列表
 @api_view(['GET'])
+@login_required
 def get_follow_list(request):
-    if request.user.is_authenticated:
-        profile = UserProfile.objects.get(user=request.user)
-        return api_response(ErrorCode.SUCCESS, profile.follow_list)
-    else:
-        return api_response(ErrorCode.NOT_LOGGED_IN)
+    profile = UserProfile.objects.get(user=request.user)
+    return api_response(ErrorCode.SUCCESS, profile.follow_list)
