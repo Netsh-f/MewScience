@@ -38,7 +38,7 @@ class Project(models.Model):
 class PatentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patent
-        exclude = ['authors_r', 'id']
+        exclude = ['authors_r']
 
 
 class RewardSerializer(serializers.ModelSerializer):
@@ -61,7 +61,7 @@ class PatentOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patent
-        exclude = ['authors_r', 'id']
+        exclude = ['authors_r']
 
 
 class RewardOutputSerializer(serializers.ModelSerializer):
