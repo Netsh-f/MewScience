@@ -14,3 +14,4 @@ def update_data():
     last_beat_time = cache.get('last_beat_time')
     current_time = timezone.now()
     cache.set('last_beat_time', current_time)
+    print("launch")

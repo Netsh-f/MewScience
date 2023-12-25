@@ -111,6 +111,7 @@ def advanced_search_works(request, serializer):
     min_score = serializer.validated_data.get('min_score')
     sort = serializer.validated_data.get('sort')
     order = serializer.validated_data.get('order')
+    aggs_size = serializer.validated_data.get('aggs_size')
 
     if page is None or page <= 0:
         page = 1
@@ -122,8 +123,9 @@ def advanced_search_works(request, serializer):
         sort = "relevance"
     if order is None:
         order = "desc"
+    if aggs_size is None:
+        aggs_size = 10
 
-    aggs_size = 10
     query_body = {
         "query": {
             "bool": {

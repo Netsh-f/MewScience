@@ -28,6 +28,7 @@ class AdvancedSearchWorksSerializer(serializers.Serializer):
     page_size = serializers.IntegerField(allow_null=True)
     sort = serializers.CharField(max_length=32, allow_null=True)
     order = serializers.CharField(max_length=8, allow_null=True)
+    aggs_size = serializers.IntegerField(allow_null=True)
 
 
 class SearchAuthorsSerializer(serializers.Serializer):
