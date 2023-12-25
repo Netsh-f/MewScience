@@ -127,7 +127,7 @@ def get_collect_list(request):
     return api_response(ErrorCode.SUCCESS, profile.collect_list)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @login_required
 @validate_request(CollectWorkSerializer)
 def cancel_collect_work(request, serializer):

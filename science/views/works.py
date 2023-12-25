@@ -7,6 +7,7 @@
 """
 import math
 
+from elastic_transport import ConnectionTimeout
 from elasticsearch.exceptions import NotFoundError
 from requests import JSONDecodeError
 from rest_framework.decorators import api_view
