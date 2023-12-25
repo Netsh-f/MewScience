@@ -100,7 +100,7 @@ def get_follow_list(request):
     return api_response(ErrorCode.SUCCESS, profile.follow_list)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @login_required
 @validate_request(CollectWorkSerializer)
 def collect_work(request, serializer):

@@ -71,6 +71,11 @@ def get_researcher(request, serializer):
     projects = Project.objects.filter(authors_r__contains=id).all()
     result['projects'] = ProjectOutputSerializer(projects, many=True).data
 
+    if request.user.is_authenticated and str(id) in request.user.userprofile.follow_list:
+        result['followed'] = True
+    else:
+        result['followed'] = False
+
     return api_response(ErrorCode.SUCCESS, result)
 
 
