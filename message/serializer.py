@@ -10,15 +10,23 @@ from message.models import Message
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    content = serializers.SerializerMethodField()
     timestamp = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
-    def get_content(self, instance:Message):
-        if instance.research_id == -1:
-            return f"您对学者门户{instance.link_content}的认领申请已通过！"
-        elif instance.research_id == -2:
-            return f"您对学者门户{instance.link_content}的认领申请未通过，请联系管理员获取详细信息！"
-        else:
-            return f"您关注的学者产出了新的学术成果：{instance.link_content}"
+    research_id = serializers.SerializerMethodField()
+    msg_type = serializers.SerializerMethodField()
+    work_type = serializers.SerializerMethodField()
+
+    def get_research_id(self, instance: Message):
+        if instance.research_id == -1: return "passed"
+        elif instance.research_id == -2: return "failed"
+        else: return instance.research_id
+
+    def get_msg_type(self, instance: Message):
+        return instance.MsgType(instance.msg_type).label
+
+    def get_work_type(self, instance: Message):
+        if instance.work_type == None: return "not a work transfer message"
+        return instance.WorkType(instance.work_type).label
+
     class Meta:
         model = Message
-        fields = ['research_id', 'content', 'timestamp', 'link_content', 'link_id']
+        fields = ['research_id', 'timestamp', 'link_content', 'link_id', 'msg_type', 'work_type']

@@ -10,12 +10,13 @@ from functools import wraps
 from rest_framework.decorators import api_view
 
 from utils.error_code import ErrorCode
+from utils.response_util import api_response
 
 
 def login_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return api_view(ErrorCode.NOT_LOGGED_IN)
+            return api_response(ErrorCode.NOT_LOGGED_IN)
         return view_func(request, *args, **kwargs)
     return wrapper

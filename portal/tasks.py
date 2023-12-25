@@ -22,6 +22,8 @@ def create_message(application_id):
         )
         profile = UserProfile.objects.get(user=application.user)
         profile.researcher_id=application.research_id
+
+        profile.save()
     else:
         message = Message.objects.create(
             user=application.user,

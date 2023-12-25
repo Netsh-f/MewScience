@@ -10,12 +10,13 @@ from rest_framework.decorators import api_view
 from account.models import UserProfile
 from additional.models import Patent, Project, Reward
 from message.models import Message
+from portal.views import get_researcher_name_by_id, check_opinion
 from utils.error_code import ErrorCode
 from utils.login_check import login_required
 from utils.response_util import api_response
 
 
-def get_portal_by_user(user: User):
+def get_portal_by_user(user: User)->str:
     profile = UserProfile.objects.get(user=user)
     return profile.researcher_id
 
@@ -98,10 +99,11 @@ def transfer_reward(request):
 
 @api_view(['PUT'])
 @login_required
-def process_patent_tran(request):
+def process_patent_trans(request):
     opinion = request.data.get('opinion')
+    transfer_id = request.data.get('transfer_id')
     patent_id = request.data.get('patent_id')
-    if opinion is None or patent_id is None:
+    if opinion is None or patent_id is None or transfer_id is None:
         return api_response(ErrorCode.INVALID_DATA)
 
     try:
@@ -109,6 +111,97 @@ def process_patent_tran(request):
     except:
         return api_response(ErrorCode.PATENT_NOT_FOUND)
 
-    portal = get_portal_by_user(request.user)
-    if portal is None:
-        return api_response()
+    portal_id = get_portal_by_user(request.user)
+    if portal_id is None:
+        return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
+
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
+        return api_response(ErrorCode.USER_NOT_EXIST)
+
+    name = get_researcher_name_by_id(portal_id)
+    if check_opinion(opinion):
+        patent.authors = name
+        patent.authors_r = [portal_id]
+        patent.save()
+
+    Message.objects.create(user=transfer_user,
+                           research_id= -1 if check_opinion(opinion) else -2,
+                           link_content=name,
+                           link_id=portal_id,
+                           msg_type=Message.MsgType.TRANSFER_RESPONSE,
+                           work_type=Message.WorkType.PATENT)
+    return api_response(ErrorCode.SUCCESS)
+
+@api_view(['PUT'])
+@login_required
+def process_project_trans(request):
+    opinion = request.data.get('opinion')
+    transfer_id = request.data.get('transfer_id')
+    project_id = request.data.get('project_id')
+    if opinion is None or project_id is None or transfer_id is None:
+        return api_response(ErrorCode.INVALID_DATA)
+
+    try:
+        project = Project.objects.get(id=project_id)
+    except:
+        return api_response(ErrorCode.PATENT_NOT_FOUND)
+
+    portal_id = get_portal_by_user(request.user)
+    if portal_id is None:
+        return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
+
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
+        return api_response(ErrorCode.USER_NOT_EXIST)
+
+    name = get_researcher_name_by_id(portal_id)
+    if check_opinion(opinion):
+        project.authors = name
+        project.authors_r = [portal_id]
+        project.save()
+
+    Message.objects.create(user=transfer_user,
+                           research_id= -1 if check_opinion(opinion) else -2,
+                           link_content=name,
+                           link_id=portal_id,
+                           msg_type=Message.MsgType.TRANSFER_RESPONSE,
+                           work_type=Message.WorkType.PROJECT)
+    return api_response(ErrorCode.SUCCESS)
+
+
+@api_view(['PUT'])
+@login_required
+def process_reward_trans(request):
+    opinion = request.data.get('opinion')
+    transfer_id = request.data.get('transfer_id')
+    reward_id = request.data.get('reward_id')
+    if opinion is None or reward_id is None or transfer_id is None:
+        return api_response(ErrorCode.INVALID_DATA)
+
+    try:
+        reward = Reward.objects.get(id=reward_id)
+    except:
+        return api_response(ErrorCode.PATENT_NOT_FOUND)
+
+    portal_id = get_portal_by_user(request.user)
+    if portal_id is None:
+        return api_response(ErrorCode.TRANSFEREE_NOT_REGISTERED)
+
+    transfer_user = get_user_by_portal(transfer_id)
+    if transfer_user is None:
+        return api_response(ErrorCode.USER_NOT_EXIST)
+
+    name = get_researcher_name_by_id(portal_id)
+    if check_opinion(opinion):
+        reward.authors = name
+        reward.authors_r = [portal_id]
+        reward.save()
+
+    Message.objects.create(user=transfer_user,
+                           research_id=-1 if check_opinion(opinion) else -2,
+                           link_content=name,
+                           link_id=portal_id,
+                           msg_type=Message.MsgType.TRANSFER_RESPONSE,
+                           work_type=Message.WorkType.REWARD)
+    return api_response(ErrorCode.SUCCESS)
