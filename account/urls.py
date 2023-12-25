@@ -21,4 +21,5 @@ urlpatterns = [
     path('works/collect', views.collect_work),
     path('works/collection', views.get_collect_list),
     path('works/collect/cancel', views.cancel_collect_work),
+    path('works/collected', views.is_work_collected),
 ]

@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from MewScience import settings
 from account.models import UserProfile
 from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer, CollectWorkSerializer
+from science.request_serializers import IdSerializer
 from science.views.works import get_work_from_es_or_openalex
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
@@ -138,3 +139,16 @@ def cancel_collect_work(request, serializer):
         profile.save()
         return api_response(ErrorCode.SUCCESS)
     return api_response(ErrorCode.WORK_NOT_FOUND)
+
+
+@api_view(['GET'])
+@login_required
+@validate_request(CollectWorkSerializer)
+def is_work_collected(request, serializer):
+    work_id = serializer.validated_data.get('work_id')
+    result = {}
+    if request.user.is_authenticated and str(work_id) in request.user.userprofile.collect_list:
+        result['collected'] = True
+    else:
+        result['collected'] = False
+    return api_response(ErrorCode.SUCCESS, result)

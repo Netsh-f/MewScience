@@ -8,10 +8,12 @@ from celery import shared_task
 from django.core.cache import cache
 from django.utils import timezone
 
+from data.management.commands.update_works import update_works
+
 
 @shared_task
 def update_data():
     last_beat_time = cache.get('last_beat_time')
     current_time = timezone.now()
     cache.set('last_beat_time', current_time)
-    print("launch")
+    # update_works()
