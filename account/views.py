@@ -107,14 +107,34 @@ def collect_work(request, serializer):
     work = get_work_from_es_or_openalex(work_id)
     profile = UserProfile.objects.get(user=request.user)
 
-    profile.collect_list[work_id] = {
-        "title": work.get('title'),
-        "authorships": work.get('authorships'),
-    }
-    return api_response(ErrorCode.SUCCESS, profile.collect_list)
+    if work is not None:
+        author_list = []
+        for authorship in work.get('authorships'):
+            author_list.append(authorship.get('author'))
+        profile.collect_list[work_id] = {
+            "title": work.get('title'),
+            "authorships": author_list,
+        }
+        profile.save()
+    return api_response(ErrorCode.SUCCESS)
 
 
 @api_view(['GET'])
 @login_required
 def get_collect_list(request):
-    pass
+    profile = UserProfile.objects.get(user=request.user)
+    return api_response(ErrorCode.SUCCESS, profile.collect_list)
+
+
+@api_view(['POST'])
+@login_required
+@validate_request(CollectWorkSerializer)
+def cancel_collect_work(request, serializer):
+    work_id = serializer.validated_data.get('work_id')
+    profile = UserProfile.objects.get(user=request.user)
+    if str(work_id) in profile.collect_list:
+        del profile.collect_list[str(work_id)]
+        print(profile.collect_list)
+        profile.save()
+        return api_response(ErrorCode.SUCCESS)
+    return api_response(ErrorCode.WORK_NOT_FOUND)

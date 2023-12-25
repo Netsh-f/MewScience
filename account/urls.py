@@ -20,4 +20,5 @@ urlpatterns = [
     path('follow-list', views.get_follow_list),
     path('works/collect', views.collect_work),
     path('works/collection', views.get_collect_list),
+    path('works/collect/cancel', views.cancel_collect_work),
 ]
