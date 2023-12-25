@@ -13,9 +13,11 @@ from utils.login_check import login_required
 from utils.response_util import api_response
 from portal.tasks import create_message
 
+
 def get_researcher_name_by_id(researcher_id):
     result = ES.get(index='authors', id=researcher_id)
     return result.get('_source').get('display_name')
+
 
 # 申请认领门户
 @api_view(['POST'])
@@ -65,13 +67,14 @@ def claim_portal(request):
     else:
         return api_response(ErrorCode.INVALID_DATA)
 
+
 # 获取门户对应用户
-def get_user_by_portal(research_id)->dict:
+def get_user_by_portal(research_id) -> dict:
     if research_id is None:
         return {}
     profile = UserProfile.objects.filter(researcher_id=research_id).first()
     if profile is None:
-        return {'claim_info':{'has_been_claimed': False}}
+        return {'claim_info': {'has_been_claimed': False}}
     else:
         return {'claim_info': {
             'has_been_claimed': True,
@@ -79,6 +82,7 @@ def get_user_by_portal(research_id)->dict:
             'user_name': profile.user.username,
             'user_intro': profile.intro,
         }}
+
 
 # 关注指定门户
 @api_view(['PUT'])
@@ -106,10 +110,10 @@ def unfollow_portal(request):
     if research_id is None:
         return api_response(ErrorCode.INVALID_DATA)
     profile = UserProfile.objects.get(user=request.user)
-    del profile.follow_list[research_id]
-    profile.save()
+    if research_id in profile.follow_list:
+        del profile.follow_list[research_id]
+        profile.save()
     return api_response(ErrorCode.SUCCESS)
-
 
 
 # 获取申请列表
@@ -119,6 +123,7 @@ def get_applications_list(request):
     application_list = Application.objects.filter(status=Application.Status.PENDING)
     return api_response(ErrorCode.SUCCESS,
                         data=ApplicationSimpleSerializer(application_list, many=True).data)
+
 
 # 获取指定认领申请
 @api_view(['GET'])
@@ -131,10 +136,11 @@ def get_specified_application(request):
     return api_response(ErrorCode.SUCCESS,
                         data=ApplicationDetailedSerializer(application).data)
 
-def check_opinion(opinion:str):
+
+def check_opinion(opinion: str):
     return opinion == 1 or \
         opinion.lower() == 'true' or \
-        opinion.lower() == 'agree' or\
+        opinion.lower() == 'agree' or \
         opinion.lower() == 'pass'
 
 
@@ -155,5 +161,3 @@ def update_application_status(request):
     application.save()
     create_message.delay(application.id)
     return api_response(ErrorCode.SUCCESS)
-
-

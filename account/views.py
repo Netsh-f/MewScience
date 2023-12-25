@@ -135,7 +135,6 @@ def cancel_collect_work(request, serializer):
     profile = UserProfile.objects.get(user=request.user)
     if str(work_id) in profile.collect_list:
         del profile.collect_list[str(work_id)]
-        print(profile.collect_list)
         profile.save()
         return api_response(ErrorCode.SUCCESS)
     return api_response(ErrorCode.WORK_NOT_FOUND)
