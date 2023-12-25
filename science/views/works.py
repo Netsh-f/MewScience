@@ -8,6 +8,7 @@
 import math
 
 from elasticsearch.exceptions import NotFoundError
+from requests import JSONDecodeError
 from rest_framework.decorators import api_view
 
 from science.request_serializers import SearchWorksSerializer, IdSerializer, AdvancedSearchWorksSerializer
@@ -267,5 +268,14 @@ def get_work_from_es_or_openalex(id):
 @validate_request(IdSerializer)
 def get_work(request, serializer):
     id = serializer.validated_data.get('id')
-    result = get_work_from_es_or_openalex(id)
+    result = None
+    try:
+        result = get_work_from_es_or_openalex(id)
+    except JSONDecodeError:
+        return api_response(ErrorCode.WORK_NOT_FOUND)
+
+    if request.user.is_authenticated and str(id) in request.user.userprofile.collect_list:
+        result['collected'] = True
+    else:
+        result['collected'] = False
     return api_response(ErrorCode.SUCCESS, result)
