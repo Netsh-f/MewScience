@@ -18,4 +18,7 @@ urlpatterns = [
     path('set-admin', views.set_admin_view),
     path('update-intro', views.update_self_intro),
     path('follow-list', views.get_follow_list),
+    path('works/collect', views.collect_work),
+    path('works/collection', views.get_collect_list),
+    path('works/collect/cancel', views.cancel_collect_work),
 ]

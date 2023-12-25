@@ -5,7 +5,8 @@ from rest_framework.response import Response
 
 from MewScience import settings
 from account.models import UserProfile
-from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer
+from account.request_serializers import RegisterSerializer, LoginSerializer, GetInfoSerializer, CollectWorkSerializer
+from science.views.works import get_work_from_es_or_openalex
 from utils.decorators import validate_request
 from utils.error_code import ErrorCode
 from utils.login_check import login_required
@@ -48,6 +49,7 @@ def get_self_info_view(request):
     user = request.user
     return api_response(ErrorCode.SUCCESS, data=get_info(user))
 
+
 @api_view(['GET'])
 def get_info_view(request):
     user_id = request.GET.get('user_id')
@@ -60,6 +62,7 @@ def get_info_view(request):
 
     return api_response(ErrorCode.SUCCESS, data=get_info(user))
 
+
 @api_view(['PUT'])
 def set_admin_view(request):
     if not settings.DEBUG:
@@ -67,14 +70,16 @@ def set_admin_view(request):
     if request.user.is_authenticated:
         user = request.user
         profile = UserProfile.objects.get(user=user)
-        profile.identity=1
+        profile.identity = 1
         profile.save()
         return api_response(ErrorCode.SUCCESS)
     else:
         return api_response(ErrorCode.NOT_LOGGED_IN)
 
+
 def get_info(user):
     return GetInfoSerializer(user).data
+
 
 @api_view(['PUT'])
 @login_required
@@ -85,9 +90,51 @@ def update_self_intro(request):
     profile.save()
     return api_response(ErrorCode.SUCCESS)
 
+
 # 获取关注列表
 @api_view(['GET'])
 @login_required
 def get_follow_list(request):
     profile = UserProfile.objects.get(user=request.user)
     return api_response(ErrorCode.SUCCESS, profile.follow_list)
+
+
+@api_view(['POST'])
+@login_required
+@validate_request(CollectWorkSerializer)
+def collect_work(request, serializer):
+    work_id = serializer.validated_data.get('work_id')
+    work = get_work_from_es_or_openalex(work_id)
+    profile = UserProfile.objects.get(user=request.user)
+
+    if work is not None:
+        author_list = []
+        for authorship in work.get('authorships'):
+            author_list.append(authorship.get('author'))
+        profile.collect_list[work_id] = {
+            "title": work.get('title'),
+            "authorships": author_list,
+        }
+        profile.save()
+    return api_response(ErrorCode.SUCCESS)
+
+
+@api_view(['GET'])
+@login_required
+def get_collect_list(request):
+    profile = UserProfile.objects.get(user=request.user)
+    return api_response(ErrorCode.SUCCESS, profile.collect_list)
+
+
+@api_view(['POST'])
+@login_required
+@validate_request(CollectWorkSerializer)
+def cancel_collect_work(request, serializer):
+    work_id = serializer.validated_data.get('work_id')
+    profile = UserProfile.objects.get(user=request.user)
+    if str(work_id) in profile.collect_list:
+        del profile.collect_list[str(work_id)]
+        print(profile.collect_list)
+        profile.save()
+        return api_response(ErrorCode.SUCCESS)
+    return api_response(ErrorCode.WORK_NOT_FOUND)

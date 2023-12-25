@@ -31,11 +31,12 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=128)
     password = serializers.CharField(max_length=128)
 
-class UserProfileSerializer(serializers.ModelSerializer):
 
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['identity', 'researcher_id', 'follow_list', 'intro']
+
 
 class GetInfoSerializer(serializers.ModelSerializer):
     user_profile = serializers.SerializerMethodField()
@@ -51,3 +52,7 @@ class GetInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'user_profile']
+
+
+class CollectWorkSerializer(serializers.Serializer):
+    work_id = serializers.IntegerField()
