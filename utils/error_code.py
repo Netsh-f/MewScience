@@ -40,3 +40,6 @@ class ErrorCode(Enum):
     PATENT_NOT_FOUND = 30002
     PROJECT_NOT_FOUND = 30003
     REWARD_NOT_FOUND = 30004
+
+    # message
+    MSG_NOT_FOUND = 40001

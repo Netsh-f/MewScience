@@ -7,8 +7,9 @@
 
 from django.urls import path
 
-from message.views import get_msg_list
+from message import views
 
 urlpatterns = [
-    path('messages/list', get_msg_list),
+    path('messages/list', views.get_msg_list),
+    path('messages/update-status', views.update_message_status)
 ]
