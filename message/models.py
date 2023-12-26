@@ -22,3 +22,4 @@ class Message(models.Model):
     link_id = models.BigIntegerField(null=True)
     msg_type = models.IntegerField(choices=MsgType.choices, default=1)
     work_type = models.IntegerField(choices=WorkType.choices, null=True)
+    status = models.BooleanField(default=False)
