@@ -28,12 +28,12 @@ def register(request, serializer):
 @validate_request(LoginSerializer)
 def login_view(request, serializer):
     user: User = authenticate(request, **serializer.validated_data)
-    data = {
-        'identify': UserProfile.objects.get(user=user).identity
-    }
 
     if user is not None:
         login(request, user)
+        data = {
+            'identify': UserProfile.objects.get(user=user).identity
+        }
         return api_response(ErrorCode.SUCCESS, data)
     return api_response(ErrorCode.WRONG_USERNAME_OR_PASSWORD)
 
