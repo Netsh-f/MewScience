@@ -5,14 +5,13 @@ from rest_framework.decorators import api_view
 from MewScience import settings
 from MewScience.settings import ES
 from account.models import UserProfile
+from message.models import Message
 from portal.models import Application
 from portal.serializers import ApplicationSimpleSerializer, ApplicationDetailedSerializer
 from utils.error_code import ErrorCode
 from utils.file_check import file_check
 from utils.login_check import login_required
 from utils.response_util import api_response
-from portal.tasks import create_message
-
 
 def get_researcher_name_by_id(researcher_id):
     result = ES.get(index='authors', id=researcher_id)
@@ -159,5 +158,24 @@ def update_application_status(request):
     else:
         application.status = Application.Status.FAILED
     application.save()
-    create_message.delay(application.id)
+    create_message(application.id)
     return api_response(ErrorCode.SUCCESS)
+
+def create_message(application_id):
+    application = Application.objects.get(id=application_id)
+    if application.status == Application.Status.PASSED:
+        message = Message.objects.create(
+            user=application.user,
+            link_content=application.research_name,
+            link_id=application.research_id
+        )
+        profile = UserProfile.objects.get(user=application.user)
+        profile.researcher_id=application.research_id
+        profile.save()
+    else:
+        message = Message.objects.create(
+            user=application.user,
+            research_id=-2,
+            link_content=application.research_name,
+            link_id=application.research_id
+        )
